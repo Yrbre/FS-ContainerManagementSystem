@@ -12,17 +12,20 @@
     </thead>
     <tbody>
         @php
-            $lastCt = '';
+            // Grouping per BAST (id_detail), bukan per container_code,
+            // agar kontainer yang sama di BAST/lokasi berbeda tampil sebagai grup terpisah
+            $lastGroup = false;
         @endphp
         @forelse ($results as $result)
+            @php
+                // id_detail bisa NULL (BAST belum kembali dari vendor, hasil LEFT JOIN) -> tiap baris jadi grup sendiri
+                $isNewGroup = is_null($result->id_detail) || $lastGroup !== $result->id_detail;
+            @endphp
             <tr>
-                @if ($lastCt != $result->container_code)
+                @if ($isNewGroup)
                     @php
                         // $rowspan = count($results->groupBy('container_code')[$result->container_code]);
-                        $rowspan = $results
-                            ->where('container_code', $result->container_code)
-                            ->where('action_date', $result->action_date)
-                            ->count();
+                        $rowspan = is_null($result->id_detail) ? 1 : $results->where('id_detail', $result->id_detail)->count();
                     @endphp
                     <td rowspan="{{ $rowspan }}">{{ $result->container_code }}</td>
                     <td rowspan="{{ $rowspan }}">{{ $result->carriage_number ?? '-' }}</td>
@@ -39,7 +42,7 @@
 
             </tr>
             @php
-                $lastCt = $result->container_code;
+                $lastGroup = $result->id_detail;
             @endphp
         @empty
             <tr>

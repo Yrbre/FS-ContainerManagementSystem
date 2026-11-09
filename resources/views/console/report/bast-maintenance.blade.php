@@ -41,7 +41,7 @@
             </div>
 
             <div class="card-body">
-                Ditemukan <strong>#{{count($results->groupBy('container_code'))}} data</strong>
+                Ditemukan <strong>#{{$results->whereNotNull('id_detail')->pluck('id_detail')->unique()->count() + $results->whereNull('id_detail')->count()}} data</strong>
                 <div class="table-responsive">
                     @if($params['by_type'] == "Maintenance")
                         @include('console.report.bast.maintenance-table')

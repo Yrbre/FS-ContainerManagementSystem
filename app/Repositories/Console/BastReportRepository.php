@@ -69,8 +69,8 @@ class BastReportRepository
             // });
         }
 
-        $query->orderBy('id_detail', 'asc')->orderBy('bast_to_vendor_header.action_date', 'asc');
-        // sorting by action_date doesn't have much of an effect
+        // Urut per tanggal BAST, lalu id_detail agar baris satu BAST tetap berdempetan (grouping di view per id_detail)
+        $query->orderBy('bast_to_vendor_header.action_date', 'asc')->orderBy('id_detail', 'asc');
 
         // $query->orderBy(DB::raw('TRY_CAST(bast_to_vendor_detail.container_code as INT)'), 'asc');
         return $query->get();
@@ -87,6 +87,7 @@ class BastReportRepository
             'sub_detail_from_vendor.qty',
             'bast_from_vendor_header.action_date as tgl_selesai',
             'bast_to_vendor_detail.carriage_number',
+            'bast_from_vendor_detail.id as id_detail',
 
         ])
         ->join("container_delegation_details as bast_to_vendor_detail", "bast_to_vendor_detail.container_delegation_id", "=", "bast_to_vendor_header.id","left")
@@ -118,7 +119,8 @@ class BastReportRepository
             $q->where('bast_to_vendor_header.location_id', $params['by_location']);
         });
 
-        $query->orderBy('bast_to_vendor_header.action_date', 'asc');
+        // Urut per tanggal BAST, lalu id_detail agar baris satu BAST tetap berdempetan (grouping di view per id_detail)
+        $query->orderBy('bast_to_vendor_header.action_date', 'asc')->orderBy('bast_from_vendor_detail.id', 'asc');
         // $query->orderBy(DB::raw('TRY_CAST(bast_to_vendor_detail.container_code as INT)'), 'asc');
         return $query->get();
 

@@ -18,17 +18,19 @@
     </thead>
     <tbody>
         @php
-            $lastCt = '';
+            // Grouping per BAST (id_detail), bukan per container_code,
+            // agar kontainer yang sama di BAST/lokasi berbeda tampil sebagai grup terpisah
+            $lastGroup = false;
         @endphp
         @forelse ($results as $result)
+            @php
+                $isNewGroup = $lastGroup !== $result->id_detail;
+            @endphp
             <tr>
-                @if ($lastCt != $result->container_code)
+                @if ($isNewGroup)
                     @php
                         // $rowspan = count($results->groupBy('container_code')[$result->container_code]);
-                        $rowspan = $results
-                            ->where('container_code', $result->container_code)
-                            ->where('action_date', $result->action_date)
-                            ->count();
+                        $rowspan = $results->where('id_detail', $result->id_detail)->count();
                     @endphp
                     <td rowspan="{{ $rowspan }}">{{ $result->container_code }}</td>
                     <td rowspan="{{ $rowspan }}">{{ DateHelper::format($result->action_date) }}</td>
@@ -47,7 +49,7 @@
                 <td>{{ $result->unit }}</td>
                 <td>{{ number_format($result->unit_price) }}</td>
                 <td>{{ number_format($result->price_estimation) }}</td>
-                @if ($lastCt != $result->container_code)
+                @if ($isNewGroup)
                     <td rowspan="{{ $rowspan }}">{{ DateHelper::format($result->approve_date) }}</td>
                     <td rowspan="{{ $rowspan }}">{{ DateHelper::format($result->approve2_date) }}</td>
                     <td rowspan="{{ $rowspan }}">{{ DateHelper::format($result->approve3_date) }}</td>
@@ -58,7 +60,7 @@
 
             </tr>
             @php
-                $lastCt = $result->container_code;
+                $lastGroup = $result->id_detail;
             @endphp
         @empty
             <tr>
