@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8">
+<title>CTC · Container Management System — Overview</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:2000px;height:1414px;background:#fff}
+body{font-family:"Inter","Segoe UI",Arial,sans-serif;color:#1f2937;font-size:15.5px;line-height:1.3;padding:20px 32px}
+code,.mono{font-family:"Cascadia Mono","Consolas",monospace;font-size:.9em}
+b{font-weight:700}
+.hdr{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid #1f2937;padding-bottom:12px}
+.hdr h1{font-size:40px;font-weight:800;letter-spacing:-.5px;color:#111827}
+.hdr h1 span{color:#1d6fd8}
+.hdr .sub{color:#4b5563;font-size:18px;margin-top:4px}
+.hdr .meta{text-align:right;font-size:15px;color:#4b5563}
+.hdr .meta b{color:#111827;font-size:16px}
+.legend{display:flex;gap:18px;justify-content:flex-end;margin-top:6px;align-items:center}
+.ar{display:inline-block;width:40px;border-top:3px solid #1f2937;position:relative;vertical-align:middle;margin-right:6px}
+.ar:after{content:"";position:absolute;right:-2px;top:-7px;border:5.5px solid transparent;border-left:9px solid #1f2937}
+.ar.d{border-top-style:dashed}
+.top{display:grid;grid-template-columns:330px 375px 440px 1fr;gap:38px;margin-top:14px;position:relative}
+.colh{font-weight:800;font-size:16px;letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.num{width:26px;height:26px;border-radius:50%;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:14px}
+.box{border:2.5px solid;border-radius:14px;padding:12px 16px;margin-bottom:14px}
+.box h3{font-size:19px;font-weight:800;margin-bottom:1px}
+.box .s{color:#6b7280;font-size:14.5px;margin-bottom:6px}
+ul{list-style:none}
+li{position:relative;padding-left:14px;margin:2px 0}
+li:before{content:"";position:absolute;left:1px;top:8px;width:6px;height:6px;border-radius:50%;background:#6b7280}
+.y{border-color:#e0a91b;background:#fff9e8}.y h3{color:#8a5a00}
+.y.dash{border-style:dashed}
+.p{border-color:#8b5cf6;background:#f6f2ff}.p h3{color:#5b21b6}
+.bl{border-color:#2b7de0;background:#ebf4ff}.bl h3{color:#0f3d80}
+.g{border-color:#14a38b;background:#e6f7f3}.g h3{color:#0b5e50}
+.gr{border-color:#4b5563;background:#f5f6f8}
+.pill{display:inline-block;border:1.5px solid #c9971a;border-radius:20px;padding:0 9px;font-weight:700;font-size:13.5px;margin:2px 2px 2px 0;background:#fff}
+.step{display:flex;gap:10px;margin:7px 0}
+.step .n{flex:0 0 24px;height:24px;border-radius:50%;background:#8b5cf6;color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.step b.t{color:#5b21b6;font-size:16.5px}
+.step div div{font-size:14.5px}
+.warn{color:#b91c1c;font-weight:600;font-size:14px;margin-top:4px}
+.inner{border:1.5px solid #2b7de0;border-radius:8px;background:#fff;padding:6px 10px;margin:6px 0}
+.inner b.h{color:#0f3d80}
+.tag{display:inline-block;border-radius:5px;padding:0 6px;font-size:12px;font-weight:800;color:#fff;vertical-align:1px}
+.t-k{background:#b91c1c}.t-t{background:#ea6a2a}.t-s{background:#c99a06}.t-r{background:#6b7280}.t-c{background:#14a38b}.t-wa{background:#22a35a}.t-m{background:#2b7de0}
+/* rails */
+.rail{border:1.5px solid #9ca3af;border-radius:9px;background:#fff;padding:7px 12px;margin:7px 0}
+.rail .rt{font-weight:800;font-size:16.5px}
+.rail .rt small{font-weight:500;color:#6b7280;font-size:13.5px}
+.flow{display:flex;align-items:center;flex-wrap:nowrap;gap:4px;margin:6px 0 4px}
+.st{border-radius:6px;padding:1px 7px;font-weight:700;font-size:13px;border:1.5px solid;white-space:nowrap}
+.st.dr{background:#f3f4f6;border-color:#9ca3af;color:#374151}
+.st.po{background:#fff4d6;border-color:#e0a91b;color:#7a5200}
+.st.ap{background:#dff5ee;border-color:#14a38b;color:#0b5e50}
+.fa{color:#6b7280;font-size:12.5px;white-space:nowrap}
+.fa i{font-style:normal;display:block;text-align:center;font-size:11.5px;color:#374151;font-weight:600;margin-bottom:-3px}
+.rail .ln{font-size:14px;margin:1px 0}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:0}
+.cstat{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-top:6px}
+.cs{border:1.5px solid #9ca3af;border-radius:7px;padding:3px 5px;text-align:center;font-size:12px;line-height:1.15}
+.cs b{display:block;font-size:15px}
+.bottom{display:grid;grid-template-columns:743px 1fr;gap:38px;margin-top:2px}
+.red{border:2.5px solid #dc2626;background:#fdecec;border-radius:14px;padding:11px 20px}
+.red h2{color:#9f1d1d;font-size:23px;margin-bottom:8px}
+.f{display:flex;gap:10px;margin:4px 0;font-size:14.8px}
+.f .tag{flex:0 0 74px;text-align:center;font-size:13px;padding:2px 0;height:22px;margin-top:1px}
+.f b{color:#9f1d1d}
+.quick{border-top:2px solid #dc2626;margin-top:7px;padding-top:6px;color:#7f1d1d;font-size:15px}
+.dark{border:2.5px solid #374151;background:#f7f8fa;border-radius:14px;padding:11px 20px}
+.dark h2{font-size:23px;color:#111827}
+.dark .s{color:#6b7280;font-size:15px}
+.cols2{display:grid;grid-template-columns:1.25fr 1fr;gap:26px;margin-top:8px}
+.lbl{font-weight:800;font-size:14.5px;letter-spacing:.8px;border-bottom:2px solid #1f2937;padding-bottom:3px;margin-bottom:7px}
+.job{display:flex;gap:12px;border:1.5px solid #d1d5db;border-radius:8px;background:#fff;padding:5px 10px;margin-bottom:5px;font-size:14.3px}
+.job .tm{flex:0 0 64px;font-weight:800;font-size:15px;color:#111827}
+.job b{color:#111827}
+.q{border:2px dashed #dc2626;border-radius:9px;padding:7px 12px;background:#fff5f5;font-size:14.5px;color:#7f1d1d}
+.q b{color:#b91c1c}
+.arrow{position:absolute;height:0;border-top:3px solid #1f2937}
+.arrow:after{content:"";position:absolute;right:-4px;top:-8px;border:6.5px solid transparent;border-left:11px solid #1f2937}
+.arrow.d{border-top-style:dashed}
+.varrow{position:absolute;width:0;border-left:3px solid #1f2937}
+.green{border:1.5px solid #14a38b;background:#eaf8ef;border-radius:9px;padding:6px 12px;font-size:14px;margin-top:7px}
+.green b{color:#0b5e50}
+</style></head><body>
+
+<div class="hdr">
+  <div>
+    <h1>CTC <span>·</span> Container Management System</h1>
+    <div class="sub">Big picture: dari aktivitas container (CT) di lapangan sampai BAST vendor, approval berjenjang &amp; notifikasi email / WhatsApp — <span class="mono">baracoal-cms</span></div>
+  </div>
+  <div class="meta">
+    <b>Diperbarui 4 November 2026</b><br>
+    Disusun dari: source <span class="mono">baracoal-cms-main</span>, <span class="mono">routes/admin.php</span>, <span class="mono">app/Repositories</span>, <span class="mono">deploy.php</span>
+    <div class="legend"><span><span class="ar"></span>otomatis</span><span><span class="ar d"></span>input manual</span></div>
+  </div>
+</div>
+
+<div class="top">
+  <!-- 1 -->
+  <div>
+    <div class="colh" style="color:#8a5a00"><span class="num" style="background:#e0a91b">1</span>Sumber data &amp; pengguna</div>
+    <div class="box y">
+      <h3>Checker di Lapangan</h3>
+      <div class="s">Input harian via UI web · lokasi stasiun / site</div>
+      <ul>
+        <li><b>Aktivitas Harian CT</b> (manual atau <b>upload Excel</b> per detail)</li>
+        <li><b>Inspeksi</b> kerusakan + foto</li>
+        <li><b>BAST ke / dari Vendor</b>, laporan <b>Progress</b> perbaikan</li>
+      </ul>
+    </div>
+    <div class="box y">
+      <h3>Master Data (Administrator)</h3>
+      <div class="s">Satu-satunya sumber referensi transaksi</div>
+      <div><span class="pill">Container</span><span class="pill">Vendor</span><span class="pill">Kontrak</span><span class="pill">Lokasi</span><span class="pill">Company</span><span class="pill">Unit</span><span class="pill">Config</span></div>
+      <ul style="margin-top:4px">
+        <li><b>Kontrak</b> Maintenance / Pengadaan: harga per item + masa garansi (hari / bulan)</li>
+        <li>Container: vendor, kontrak, status &amp; riwayat naik/turun</li>
+      </ul>
+    </div>
+    <div class="box y dash">
+      <h3>8 Role Pengguna</h3>
+      <div class="s">Login username + password (tabel <span class="mono">admins</span>)</div>
+      <div><span class="pill">Administrator</span><span class="pill">Checker</span><span class="pill">Supervisor</span><span class="pill">Manager</span><span class="pill">Finance</span><span class="pill">Finance Staff</span><span class="pill">Purchasing</span><span class="pill">Site Manager</span></div>
+      <ul style="margin-top:4px">
+        <li>Akses tiap menu diatur middleware <span class="mono">role:</span></li>
+        <li>Administrator lolos semua cek (<span class="mono">hasRole</span>)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 2 -->
+  <div>
+    <div class="colh" style="color:#5b21b6"><span class="num" style="background:#8b5cf6">2</span>Siklus transaksi container</div>
+    <div class="box p" style="padding-bottom:8px">
+      <h3>Alur kerja CT</h3>
+      <div class="s">Tiap transaksi: DRAFT → POST → APPROVE</div>
+      <div class="step"><span class="n">1</span><div><b class="t">Aktivitas Harian</b><div>Turun / Naik CT, Putus Gerbong, CT-DT, Truck Unloading, Uplift / Unloading → <b>status CT otomatis berubah</b> saat POST</div></div></div>
+      <div class="step"><span class="n">2</span><div><b class="t">Inspeksi</b><div>Hanya CT berstatus <b>O</b>. POST → CT jadi <b>TSO / TSOI</b>. Approve wajib isi jenis perbaikan + root cause</div></div></div>
+      <div class="step"><span class="n">3</span><div><b class="t">BAST ke Vendor (BAST 1)</b><div>Maintenance atau Upgrade &amp; Repair, item &amp; harga dari kontrak. Approve 3 tingkat</div></div></div>
+      <div class="step"><span class="n">4</span><div><b class="t">Progress Perbaikan</b><div>% progress per CT dari vendor; tidak bisa approve jika ada progress lama (vendor + lokasi sama) belum disetujui</div></div></div>
+      <div class="step"><span class="n">5</span><div><b class="t">BAST dari Vendor (BAST 2)</b><div>Approve → <b>garansi dihitung</b> dari kontrak, BAST 1 ditandai selesai, CT kembali <b>SO</b></div></div></div>
+      <div class="step"><span class="n">6</span><div><b class="t">Scrap</b><div>Dokumen + foto; approve Manager → CT berstatus <b>S</b></div></div></div>
+    </div>
+    <div class="warn">⚠ Draft Aktivitas Harian &gt; 7 hari dihapus otomatis setiap kali halaman daftarnya dibuka.<br>⚠ Lokasi id 2 &amp; 3 (BJI-BBA) di-hardcode pada aturan "Turun Container".</div>
+  </div>
+
+  <!-- 3 -->
+  <div>
+    <div class="colh" style="color:#0f3d80"><span class="num" style="background:#2b7de0">3</span>Database &amp; aplikasi</div>
+    <div class="box bl">
+      <h3>Database · SQL Server</h3>
+      <div class="s">Query memakai <span class="mono">TRY_CAST</span>/<span class="mono">ISNULL</span> · 70+ migration · view <span class="mono">v_ct_*</span></div>
+      <div class="inner"><b class="h">Master</b> — admins, containers, container_statuses, vendors, contracts, contract_details, locations, companies, units, configs</div>
+      <div class="inner"><b class="h">Transaksi</b>
+        <ul>
+          <li>container_daily_activities (+details)</li>
+          <li>inspections (+details) · container_repairs (+details)</li>
+          <li>container_delegations (+details, sub_details)</li>
+          <li>container_delegation_from_vendors (+details, sub_details)</li>
+          <li>container_scraps (+details) · records (riwayat CT)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="box g" style="margin-bottom:0">
+      <h3>CTC Web · Laravel 8 (PHP 8.1)</h3>
+      <div class="s mono">/console · server 172.16.10.28 · CoreUI 4 + Livewire 2</div>
+      <ul>
+        <li><b>Dashboard:</b> chart Livewire + cek status layanan WhatsApp</li>
+        <li><b>Master:</b> Container · Vendor · Kontrak · Lokasi · Company · Unit · Admin · Config</li>
+        <li><b>Transaksi:</b> Aktivitas Harian · Inspeksi · BAST ke/dari Vendor · Progress · Scrap</li>
+        <li><b>Report:</b> Container Dashboard · Status Report · Container Record · BAST (Maintenance / Upgrade / Inspeksi) → <b>export Excel</b></li>
+        <li><b>Tools:</b> start/stop sesi WA + QR code, unduh User Manual PDF</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 4 -->
+  <div>
+    <div class="colh" style="color:#374151"><span class="num" style="background:#4b5563">4</span>Approval &amp; notifikasi: kapan, apa, ke siapa</div>
+    <div class="box gr" style="padding-bottom:9px">
+      <h3>Peta approval per transaksi</h3>
+      <div class="s">Email via SMTP (Mail) · penerima = semua user dengan role tsb · Reject mengembalikan ke tahap sebelumnya</div>
+
+      <div class="rail"><div class="rt">Inspeksi <small>· WA grup + email</small></div>
+        <div class="flow"><span class="st dr">DRAFT</span><span class="fa"><i>Checker</i>──POST──▶</span><span class="st po">POSTED</span><span class="fa"><i>Supervisor</i>──────▶</span><span class="st ap">APPROVE</span></div>
+        <div class="ln"><span class="tag t-m">EMAIL</span> POST → semua Supervisor · Approve / Reject → Checker pembuat</div>
+        <div class="ln"><span class="tag t-wa">WA</span> POST → grup WA: laporan kerusakan per CT + link foto (jika config <span class="mono">whatsapp-notif</span> aktif)</div>
+      </div>
+
+      <div class="rail"><div class="rt">BAST ke Vendor <small>· approval 3 tingkat</small></div>
+        <div class="flow"><span class="st dr">DRAFT</span><span class="fa"><i>Checker</i>─▶</span><span class="st po">POSTED</span><span class="fa"><i>Supervisor</i>─▶</span><span class="st ap">APPROVE1</span><span class="fa"><i>Manager</i>─▶</span><span class="st ap">APPROVE2</span><span class="fa"><i>Finance</i>─▶</span><span class="st ap">APPROVE3</span></div>
+        <div class="ln"><span class="tag t-m">EMAIL</span> POST → Supervisor · A1 → Manager · A2 → Finance · A3 → Supervisor + Manager</div>
+        <div class="ln"><span class="tag t-k">REJECT</span> → Checker / Supervisor / Spv+Mgr sesuai tahap · Unapprove → Checker + Manager</div>
+      </div>
+
+      <div class="rail"><div class="rt">BAST dari Vendor · Progress <small>· 1 tingkat</small></div>
+        <div class="flow"><span class="st dr">DRAFT</span><span class="fa"><i>Checker</i>──POST──▶</span><span class="st po">POSTED</span><span class="fa"><i>Supervisor</i>──────▶</span><span class="st ap">APPROVE</span></div>
+        <div class="ln"><span class="tag t-m">EMAIL</span> POST → Supervisor · Reject → Checker · Progress approve → Checker pembuat</div>
+      </div>
+
+      <div class="rail"><div class="rt">Scrap <small>· dibuat Supervisor</small></div>
+        <div class="flow"><span class="st dr">DRAFT</span><span class="fa"><i>Supervisor</i>──▶</span><span class="st po">POSTED</span><span class="fa"><i>Manager</i>──▶</span><span class="st ap">APPROVE1</span><span class="fa"><i>Finance</i>──▶</span><span class="st ap" style="opacity:.45">APPROVE2</span></div>
+        <div class="ln"><span class="tag t-m">EMAIL</span> POST &amp; A1 → Manager · Reject → Supervisor</div>
+      </div>
+
+      <div class="lbl" style="margin-top:9px;font-size:13.5px">STATUS CONTAINER (warna di Container Dashboard)</div>
+      <div class="cstat">
+        <div class="cs" style="background:#fff"><b>O</b>Operasional</div>
+        <div class="cs" style="background:#ffff00"><b>SO</b>Siap Operasi</div>
+        <div class="cs" style="background:#f4b083"><b>TSO</b>Maintenance</div>
+        <div class="cs" style="background:#c55a11;color:#fff"><b>TSO</b>Upgrade/Repair</div>
+        <div class="cs" style="background:#f5e342"><b>SOI / </b><span style="display:block;background:#bcc9ab;margin:0 -5px -3px;padding:0 0 2px"><b style="display:inline">TSOI</b> isi</span></div>
+        <div class="cs" style="background:#ff0000;color:#fff"><b>S</b>Scrap</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- arrows between columns -->
+  <div class="arrow" style="left:333px;top:150px;width:30px"></div>
+  <div class="arrow d" style="left:333px;top:640px;width:30px"></div>
+  <div class="arrow" style="left:748px;top:330px;width:30px"></div>
+  <div class="arrow" style="left:1224px;top:250px;width:30px"></div>
+</div>
+
+<div class="bottom">
+  <div class="red">
+    <h2>Temuan penting dari bedah kode</h2>
+    <div class="f"><span class="tag t-k">KRITIS</span><div><b>Logika approve/reject Administrator salah urutan operator</b> (<span class="mono">A || B &amp;&amp; C</span>): Admin selalu masuk cabang pertama → BAST ke Vendor <b>APPROVE2 bisa turun lagi ke APPROVE1</b>, reject selalu ke DRAFT. (BAST ke Vendor, BAST dari Vendor, Scrap)</div></div>
+    <div class="f"><span class="tag t-t">TINGGI</span><div><b>Hak akses bolong:</b> route Lokasi (create/edit/hapus), hapus detail inspeksi, update progress BAST 2 &amp; semua Report tanpa middleware <span class="mono">role</span> — semua user login bisa akses.</div></div>
+    <div class="f"><span class="tag t-t">TINGGI</span><div><b>Scrap APPROVE2 tidak pernah tercapai:</b> route approve hanya untuk Administrator &amp; Manager, cabang Finance tidak bisa dipanggil.</div></div>
+    <div class="f"><span class="tag t-t">TINGGI</span><div><b>Reject Progress Perbaikan error:</b> typo <span class="mono">createdByUser&gt;email</span> (ContainerRepairRepository) → email ke Checker gagal.</div></div>
+    <div class="f"><span class="tag t-s">SEDANG</span><div><b><span class="mono">dd()</span> tertinggal di Scrap</b> saat email gagal → halaman berhenti, transaksi DB tidak di-commit.</div></div>
+    <div class="f"><span class="tag t-s">SEDANG</span><div><b>Email praktis sinkron di dalam DB transaction:</b> 15 Mailable pakai <span class="mono">ShouldQueue</span>, tapi <span class="mono">QUEUE_CONNECTION=sync</span> (.env.example) → SMTP lambat/gagal, POST/approve ikut gagal.</div></div>
+    <div class="f"><span class="tag t-s">SEDANG</span><div><b>Alamat hardcode:</b> WA gateway <span class="mono">172.16.10.114:3000</span>, <span class="mono">172.16.10.113:8000</span>, email <span class="mono">it@baracoal.com</span>, lokasi id 2/3. Dashboard error jika config <span class="mono">whatsapp-notif</span> tidak ada.</div></div>
+    <div class="f"><span class="tag t-r">RENDAH</span><div><b>Seeder akun default</b> memakai password sama <span class="mono">Password123</span> untuk 8 role; sisa boilerplate (OTP, Zenziva, RankUp, Transaction) tidak dipakai.</div></div>
+    <div class="quick"><b>Langkah cepat tanpa biaya lisensi (hanya jam kerja programmer):</b> perbaiki kondisi approve dengan tanda kurung / cek status terpisah, tambah middleware <span class="mono">role</span> di route yang terbuka, hapus <span class="mono">dd()</span> &amp; typo, pindahkan IP/email ke <span class="mono">.env</span>, kirim email lewat queue setelah commit.</div>
+  </div>
+
+  <div class="dark">
+    <h2>Penjadwal &amp; deployment</h2>
+    <div class="s">Tidak ada cron: semua proses dipicu aksi user di web</div>
+    <div class="cols2">
+      <div>
+        <div class="lbl">PEMICU OTOMATIS (TANPA CRON)</div>
+        <div class="job"><span class="tm">Buka Dashboard</span><div><b>Cek status sesi WhatsApp</b> <span class="tag t-c">CTC</span><br>Jika tidak CONNECTED → config <span class="mono">whatsapp-notif</span> dimatikan + email ke IT</div></div>
+        <div class="job"><span class="tm">Buka Akt. Harian</span><div><b>markDraftAsDeleted</b> <span class="tag t-c">CTC</span><br>Hapus draft aktivitas harian berumur &gt; 7 hari</div></div>
+        <div class="job"><span class="tm">POST / Approve</span><div><b>Ubah status CT, hitung garansi, kirim email/WA</b> <span class="tag t-c">CTC</span><br>Garansi = tanggal BAST 2 + <span class="mono">warranty_in_days</span> / <span class="mono">_in_month</span> kontrak</div></div>
+        <div class="q"><b>? Tidak ada jadwal:</b> <span class="mono">Console\Kernel::schedule()</span> kosong — tidak ada reminder garansi habis, CT lama TSO, atau BAST tertunda.</div>
+      </div>
+      <div>
+        <div class="lbl">ALUR DEPLOY (DEPLOYER)</div>
+        <div class="job"><span class="tm">1</span><div><b>git push</b> ke <span class="mono">itbaracoal/baracoal-cms</span> · hook pre-push jalankan <span class="mono">php artisan test</span></div></div>
+        <div class="job"><span class="tm">2</span><div><b>dep deploy</b> → host <span class="mono">172.16.10.28</span>, user deployer, branch main, <span class="mono">/var/www/html</span></div></div>
+        <div class="job"><span class="tm">3</span><div><b>Build:</b> <span class="mono">npm install &amp;&amp; npm run prod</span> sebelum symlink</div></div>
+        <div class="job"><span class="tm">4</span><div><b>Setelah symlink:</b> clear opcache (php8.1-fpm) + <span class="mono">queue:restart</span></div></div>
+        <div class="green"><b>Semua email ber-<span class="mono">ShouldQueue</span>:</b> aktifkan <span class="mono">QUEUE_CONNECTION=database/redis</span> + worker agar <span class="mono">queue:restart</span> berarti.</div>
+        <div class="lbl" style="margin-top:12px">INTEGRASI EKSTERNAL</div>
+        <div class="job"><span class="tm"><span class="tag t-wa">WA</span></span><div><b>WA gateway</b> <span class="mono">172.16.10.114:3000</span> · sesi, QR, kirim pesan grup (header <span class="mono">x-api-key</span>)</div></div>
+        <div class="job"><span class="tm"><span class="tag t-m">SMTP</span></span><div><b>Mail server</b> dari <span class="mono">.env</span> · foto &amp; dokumen di <span class="mono">storage/public</span></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</body></html>

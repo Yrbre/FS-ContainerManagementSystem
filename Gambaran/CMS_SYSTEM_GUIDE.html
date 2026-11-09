@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8">
+<title>CTC Container Management System — Panduan Sistem &amp; Proses Bisnis</title>
+<style>
+@page{size:A4;margin:14mm 14mm 16mm 14mm}
+*{box-sizing:border-box}
+body{font-family:"Segoe UI",Arial,sans-serif;color:#1f2937;font-size:10pt;line-height:1.42;margin:0;zoom:0.88}
+code,.m{font-family:Consolas,"Cascadia Mono",monospace;font-size:8.6pt;background:#f1f3f6;border-radius:3px;padding:0 3px;color:#0f3d80}
+h1{font-size:25pt;margin:0 0 4px;color:#111827;letter-spacing:-.3px}
+h1 span{color:#1d6fd8}
+h2{font-size:15pt;margin:0 0 8px;padding-bottom:5px;border-bottom:2.5px solid #1f2937;color:#111827;break-after:avoid}
+h2 .no{display:inline-block;background:#1d6fd8;color:#fff;border-radius:6px;padding:0 8px;margin-right:8px;font-size:12pt}
+h3{font-size:11.5pt;margin:12px 0 4px;color:#0f3d80;break-after:avoid}
+h4{font-size:10pt;margin:8px 0 3px;color:#374151;break-after:avoid}
+p{margin:3px 0 6px}
+ul,ol{margin:3px 0 6px;padding-left:18px}
+li{margin:1.5px 0}
+.page{break-after:page}
+.page:last-child{break-after:auto}
+.sub{color:#4b5563;font-size:11pt}
+.meta{color:#6b7280;font-size:9pt}
+table{width:100%;border-collapse:collapse;margin:5px 0 9px;font-size:8.9pt;break-inside:auto}
+th{background:#1f2937;color:#fff;text-align:left;padding:4px 6px;font-weight:600}
+td{border-bottom:1px solid #e5e7eb;padding:3.5px 6px;vertical-align:top}
+tr{break-inside:avoid}
+tr:nth-child(even) td{background:#fafbfc}
+.card{border:1.6px solid #d1d5db;border-radius:9px;padding:8px 12px;margin:7px 0;break-inside:avoid}
+.card.b{border-color:#2b7de0;background:#f3f8ff}
+.card.y{border-color:#e0a91b;background:#fffaeb}
+.card.g{border-color:#14a38b;background:#effaf7}
+.card.r{border-color:#dc2626;background:#fef2f2}
+.card.p{border-color:#8b5cf6;background:#f7f4ff}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.files{border-left:4px solid #2b7de0;background:#f5f9ff;padding:5px 10px;margin:6px 0;font-size:8.9pt;break-inside:avoid}
+.files b{color:#0f3d80}
+.files div{margin:1.5px 0}
+.tag{display:inline-block;border-radius:4px;padding:0 5px;font-size:7.8pt;font-weight:700;color:#fff;vertical-align:1px}
+.k{background:#b91c1c}.t{background:#ea6a2a}.s{background:#c99a06}.rd{background:#6b7280}.ok{background:#14a38b}.bl{background:#2b7de0}.wa{background:#22a35a}
+.st{display:inline-block;border:1.3px solid;border-radius:4px;padding:0 5px;font-weight:700;font-size:8pt}
+.dr{background:#f3f4f6;border-color:#9ca3af}.po{background:#fff4d6;border-color:#e0a91b}.ap{background:#dff5ee;border-color:#14a38b}
+.cs{display:inline-block;border:1px solid #9ca3af;border-radius:4px;padding:0 6px;font-weight:700;font-size:8.3pt}
+.toc{columns:2;column-gap:28px;font-size:10pt}
+.toc div{padding:2px 0;border-bottom:1px dotted #d1d5db}
+.toc b{color:#1d6fd8;display:inline-block;width:24px}
+.note{font-size:8.8pt;color:#6b7280}
+svg text{font-family:"Segoe UI",Arial,sans-serif}
+.legend span{margin-right:12px}
+.small{font-size:8.8pt}
+</style></head><body>
+
+<!-- ================= HALAMAN 1 ================= -->
+<div class="page">
+  <div style="border-bottom:3px solid #1f2937;padding-bottom:10px;margin-bottom:12px">
+    <h1>CTC <span>·</span> Container Management System</h1>
+    <div class="sub">Panduan sistem, alur proses, proses bisnis &amp; peta file untuk penelusuran masalah</div>
+    <div class="meta" style="margin-top:4px">Repository <code>baracoal-cms-main</code> (Laravel 8) · Disusun 4 November 2026 dari pembacaan source code · Pendamping poster <code>CMS_SYSTEM_OVERVIEW.png</code></div>
+  </div>
+
+  <h3 style="margin-top:0">Ringkasan dalam satu paragraf</h3>
+  <p>CTC adalah aplikasi web internal untuk <b>mengelola siklus hidup container (CT) kereta</b> milik Baracoal: mencatat container naik/turun gerbong setiap hari, melaporkan kerusakan lewat <b>inspeksi</b>, menyerahkan container ke vendor perbaikan lewat <b>BAST 1 (ke Vendor)</b> dengan approval berjenjang, memantau <b>progress perbaikan</b>, menerima kembali container lewat <b>BAST 2 (dari Vendor)</b> sambil menghitung masa garansi dari kontrak, sampai <b>scrap</b> container yang tidak layak. Setiap transaksi mengikuti pola <span class="st dr">DRAFT</span> → <span class="st po">POSTED</span> → <span class="st ap">APPROVE</span>, dan setiap perpindahan status mengubah <b>status container</b> serta mengirim <b>email</b> (dan WhatsApp untuk inspeksi) ke role terkait.</p>
+
+  <div class="grid2">
+    <div class="card b">
+      <h4 style="margin-top:0">Teknologi</h4>
+      <ul class="small">
+        <li><b>Backend:</b> Laravel 8, PHP 8.1-FPM, pola Controller → Repository → Model</li>
+        <li><b>UI:</b> Blade + Livewire 2 (form detail), CoreUI 4, Yajra DataTables, Livewire Charts</li>
+        <li><b>Database:</b> SQL Server (query memakai <code>TRY_CAST</code>, <code>ISNULL</code>) + view <code>v_ct_*</code></li>
+        <li><b>Excel:</b> maatwebsite/excel (import aktivitas harian, export report)</li>
+        <li><b>Notifikasi:</b> Laravel Mail (15 Mailable) + WA gateway HTTP <code>172.16.10.114:3000</code></li>
+        <li><b>Deploy:</b> Deployer → <code>172.16.10.28:/var/www/html</code>, branch <code>main</code></li>
+      </ul>
+    </div>
+    <div class="card y">
+      <h4 style="margin-top:0">Pengguna (8 role, <code>app/Enums/RoleEnum.php</code>)</h4>
+      <ul class="small">
+        <li><b>Administrator</b>: semua menu &amp; master data; lolos semua cek role</li>
+        <li><b>Checker</b>: input aktivitas harian, inspeksi, BAST 1/2, progress</li>
+        <li><b>Supervisor</b>: approve inspeksi, BAST 1 tahap 1, BAST 2, progress; buat scrap</li>
+        <li><b>Manager</b>: approve BAST 1 tahap 2, approve scrap</li>
+        <li><b>Finance</b>: approve BAST 1 tahap 3</li>
+        <li><b>Finance Staff, Purchasing, Site Manager</b>: lihat data (read-only)</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Daftar isi</h3>
+  <div class="toc">
+    <div><b>1</b> Arsitektur &amp; cara sistem berjalan</div>
+    <div><b>2</b> Peta folder &amp; pola kode</div>
+    <div><b>3</b> Status container (state machine)</div>
+    <div><b>4</b> Alur proses end-to-end</div>
+    <div><b>5</b> BP-01 Master data &amp; kontrak</div>
+    <div><b>6</b> BP-02 Aktivitas harian</div>
+    <div><b>7</b> BP-03 Inspeksi</div>
+    <div><b>8</b> BP-04 BAST ke Vendor (BAST 1)</div>
+    <div><b>9</b> BP-05 Progress perbaikan</div>
+    <div><b>10</b> BP-06 BAST dari Vendor (BAST 2) &amp; garansi</div>
+    <div><b>11</b> BP-07 Scrap</div>
+    <div><b>12</b> BP-08 Dashboard, report &amp; WhatsApp</div>
+    <div><b>13</b> Matriks hak akses</div>
+    <div><b>14</b> Matriks notifikasi</div>
+    <div><b>15</b> Panduan troubleshooting (gejala → file)</div>
+    <div><b>16</b> Temuan bug &amp; rekomendasi</div>
+  </div>
+
+  <h3>Konvensi penulisan path</h3>
+  <table>
+    <tr><th style="width:18%">Singkatan</th><th>Path lengkap</th><th style="width:38%">Isi</th></tr>
+    <tr><td><code>C/</code></td><td><code>app/Http/Controllers/Console/</code></td><td>Menerima request, memanggil repository, redirect + flash</td></tr>
+    <tr><td><code>R/</code></td><td><code>app/Repositories/Console/</code></td><td><b>Logika bisnis utama</b>: post, approve, reject, ubah status CT, kirim email</td></tr>
+    <tr><td><code>L/</code></td><td><code>app/Http/Livewire/</code></td><td>Form tambah detail/sub-detail, validasi pilihan container, upload foto</td></tr>
+    <tr><td><code>V/</code></td><td><code>resources/views/console/</code> &amp; <code>resources/views/livewire/</code></td><td>Tampilan Blade</td></tr>
+    <tr><td><code>M/</code></td><td><code>app/Models/</code></td><td>Eloquent model &amp; relasi</td></tr>
+    <tr><td><code>routes/admin.php</code></td><td>prefix <code>/console</code>, nama route <code>console.*</code></td><td>Semua route aplikasi + middleware <code>role:</code></td></tr>
+  </table>
+  <p class="note">Nomor baris (mis. <code>R/InspectionRepository.php:41</code>) mengacu pada source saat dokumen ini disusun; bisa bergeser bila kode diubah.</p>
+</div>
+
+<!-- ================= HALAMAN 2 ================= -->
+<div class="page">
+  <h2><span class="no">1</span>Arsitektur &amp; cara sistem berjalan</h2>
+  <svg viewBox="0 0 720 270" width="100%" style="margin:2px 0 6px">
+    <defs><marker id="a" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#1f2937"/></marker></defs>
+    <g font-size="11">
+      <rect x="5" y="20" width="120" height="70" rx="9" fill="#fffaeb" stroke="#e0a91b" stroke-width="1.6"/>
+      <text x="65" y="45" text-anchor="middle" font-weight="700" fill="#8a5a00">Browser user</text>
+      <text x="65" y="62" text-anchor="middle" fill="#4b5563">8 role</text>
+      <text x="65" y="77" text-anchor="middle" fill="#4b5563">/console/login</text>
+
+      <rect x="165" y="10" width="370" height="185" rx="11" fill="#effaf7" stroke="#14a38b" stroke-width="1.8"/>
+      <text x="350" y="30" text-anchor="middle" font-weight="700" fill="#0b5e50" font-size="12.5">CTC Web · Laravel 8 · 172.16.10.28</text>
+      <rect x="180" y="42" width="100" height="40" rx="6" fill="#fff" stroke="#9ca3af"/><text x="230" y="60" text-anchor="middle" font-weight="700">routes/admin.php</text><text x="230" y="74" text-anchor="middle" fill="#6b7280" font-size="9.5">auth:admin + role:</text>
+      <rect x="295" y="42" width="100" height="40" rx="6" fill="#fff" stroke="#9ca3af"/><text x="345" y="60" text-anchor="middle" font-weight="700">Controller</text><text x="345" y="74" text-anchor="middle" fill="#6b7280" font-size="9.5">C/…Controller</text>
+      <rect x="410" y="42" width="110" height="40" rx="6" fill="#fff" stroke="#8b5cf6" stroke-width="1.5"/><text x="465" y="60" text-anchor="middle" font-weight="700" fill="#5b21b6">Repository</text><text x="465" y="74" text-anchor="middle" fill="#6b7280" font-size="9.5">logika bisnis</text>
+      <rect x="180" y="100" width="215" height="40" rx="6" fill="#fff" stroke="#9ca3af"/><text x="287" y="118" text-anchor="middle" font-weight="700">Livewire component</text><text x="287" y="132" text-anchor="middle" fill="#6b7280" font-size="9.5">form detail / sub-detail / progress</text>
+      <rect x="410" y="100" width="110" height="40" rx="6" fill="#fff" stroke="#9ca3af"/><text x="465" y="118" text-anchor="middle" font-weight="700">Model</text><text x="465" y="132" text-anchor="middle" fill="#6b7280" font-size="9.5">Eloquent</text>
+      <rect x="180" y="150" width="340" height="34" rx="6" fill="#fff" stroke="#9ca3af"/><text x="350" y="166" text-anchor="middle" font-weight="700">Mail (15 Mailable, ShouldQueue) · WhatspieService · Storage public</text><text x="350" y="179" text-anchor="middle" fill="#6b7280" font-size="9.5">dipanggil dari Repository saat POST / approve / reject</text>
+      <line x1="280" y1="62" x2="292" y2="62" stroke="#1f2937" stroke-width="1.6" marker-end="url(#a)"/>
+      <line x1="395" y1="62" x2="407" y2="62" stroke="#1f2937" stroke-width="1.6" marker-end="url(#a)"/>
+      <line x1="465" y1="82" x2="465" y2="97" stroke="#1f2937" stroke-width="1.6" marker-end="url(#a)"/>
+      <line x1="395" y1="120" x2="407" y2="120" stroke="#1f2937" stroke-width="1.6" marker-end="url(#a)"/>
+      <line x1="125" y1="55" x2="177" y2="60" stroke="#1f2937" stroke-width="1.6" marker-end="url(#a)"/>
+
+      <rect x="585" y="15" width="130" height="80" rx="9" fill="#f3f8ff" stroke="#2b7de0" stroke-width="1.6"/>
+      <text x="650" y="38" text-anchor="middle" font-weight="700" fill="#0f3d80">SQL Server</text>
+      <text x="650" y="55" text-anchor="middle" fill="#4b5563" font-size="9.5">tabel master &amp; transaksi</text>
+      <text x="650" y="70" text-anchor="middle" fill="#4b5563" font-size="9.5">view v_ct_so_tso,</text>
+      <text x="650" y="84" text-anchor="middle" fill="#4b5563" font-size="9.5">v_ct_bast_rekap, v_ct_record</text>
+      <line x1="520" y1="120" x2="583" y2="70" stroke="#1f2937" stroke-width="1.6" marker-end="url(#a)"/>
+
+      <rect x="585" y="110" width="130" height="45" rx="9" fill="#eaf8ef" stroke="#22a35a" stroke-width="1.6"/>
+      <text x="650" y="129" text-anchor="middle" font-weight="700" fill="#166534">WA gateway</text>
+      <text x="650" y="146" text-anchor="middle" fill="#4b5563" font-size="9.5">172.16.10.114:3000</text>
+      <line x1="520" y1="160" x2="583" y2="135" stroke="#1f2937" stroke-width="1.6" marker-end="url(#a)"/>
+
+      <rect x="585" y="165" width="130" height="40" rx="9" fill="#fff" stroke="#9ca3af" stroke-width="1.6"/>
+      <text x="650" y="182" text-anchor="middle" font-weight="700">SMTP server</text>
+      <text x="650" y="197" text-anchor="middle" fill="#4b5563" font-size="9.5">MAIL_* di .env</text>
+      <line x1="520" y1="172" x2="583" y2="183" stroke="#1f2937" stroke-width="1.6" marker-end="url(#a)"/>
+
+      <rect x="5" y="210" width="530" height="50" rx="9" fill="#f5f6f8" stroke="#4b5563" stroke-width="1.4" stroke-dasharray="5 3"/>
+      <text x="15" y="230" font-weight="700">Deploy:</text>
+      <text x="70" y="230" fill="#374151">git push (pre-push: php artisan test) → dep deploy → composer, npm run prod</text>
+      <text x="70" y="248" fill="#374151">→ symlink release → clear opcache → artisan queue:restart  (deploy.php)</text>
+      <text x="585" y="230" font-weight="700" fill="#b91c1c">Tidak ada cron</text>
+      <text x="585" y="248" fill="#7f1d1d" font-size="10">Kernel::schedule() kosong</text>
+    </g>
+  </svg>
+
+  <h3>Siklus sebuah request</h3>
+  <ol>
+    <li>User membuka <code>/</code> → diarahkan ke <code>/console/login</code> (<code>routes/web.php</code>). Login memakai <b>username + password</b> dari tabel <code>admins</code> dengan guard <code>admin</code> (<code>C/Auth/LoginController.php:31</code>).</li>
+    <li>Semua route aplikasi berada di grup <code>auth:admin</code> pada <code>routes/admin.php</code>, diberi prefix <code>/console</code> oleh <code>app/Providers/RouteServiceProvider.php:49</code>.</li>
+    <li>Tiap route diberi middleware <code>role:A,B,C</code> → <code>app/Http/Middleware/RoleMiddleware.php</code> memanggil <code>Admin::hasRole()</code> (<code>M/Admin.php:50</code>). <b>Administrator selalu lolos.</b> Jika role tidak cocok → HTTP 403.</li>
+    <li>Controller memanggil <b>Repository</b> (mis. <code>InspectionRepository::posted()</code>). Repository membuka <code>DB::beginTransaction()</code>, mengubah status transaksi, mengubah status container, mengirim email, lalu <code>DB::commit()</code>.</li>
+    <li>Halaman detail transaksi memuat <b>komponen Livewire</b> untuk menambah baris detail (pilih container, upload foto, isi item pekerjaan). Aturan "container mana yang boleh dipilih" ada di sini, <b>bukan</b> di repository.</li>
+    <li>Daftar (index) memakai Yajra DataTables di <code>app/DataTables/</code>; query-nya di <code>getDataTableQuery()</code> masing-masing repository.</li>
+  </ol>
+
+  <h3>Hal penting tentang cara kerja</h3>
+  <div class="grid2">
+    <div class="card g small"><b>Semua proses dipicu user.</b> Tidak ada scheduler/cron. Pekerjaan "otomatis" hanya berjalan ketika halaman tertentu dibuka:
+      <ul><li>Buka <b>Dashboard</b> → cek status sesi WA; jika putus → config <code>whatsapp-notif</code> dimatikan + email ke <code>it@baracoal.com</code> (<code>C/DashboardController.php:20</code>).</li>
+      <li>Buka daftar <b>Aktivitas Harian</b> → draft &gt; 7 hari dihapus (<code>C/ContainerDailyActivityController.php:19</code> → <code>R/ContainerDailyActivityRepository.php:131</code>).</li></ul></div>
+    <div class="card r small"><b>Email ber-<code>ShouldQueue</code> tapi queue = sync.</b> Semua 15 class di <code>app/Mail</code> mengimplementasikan <code>ShouldQueue</code>, tetapi <code>.env.example</code> memakai <code>QUEUE_CONNECTION=sync</code>. Artinya email dikirim <b>langsung di dalam DB transaction</b>; bila SMTP gagal, proses POST/approve ikut gagal. Cek nilai <code>.env</code> di server produksi.</div>
+  </div>
+</div>
+
+<!-- ================= HALAMAN 3 ================= -->
+<div class="page">
+  <h2><span class="no">2</span>Peta folder &amp; pola kode</h2>
+  <table>
+    <tr><th style="width:30%">Folder / file</th><th>Fungsi</th><th style="width:30%">Kapan dibuka saat debugging</th></tr>
+    <tr><td><code>routes/admin.php</code></td><td>Semua URL <code>/console/*</code> + role yang boleh mengakses</td><td>Error 403, menu tidak muncul, cari controller dari URL</td></tr>
+    <tr><td><code>app/Http/Controllers/Console/</code></td><td>Controller transaksi; <code>Master/</code> untuk master data; <code>Report/</code> untuk laporan</td><td>Redirect/flash message salah, parameter request</td></tr>
+    <tr><td><code>app/Repositories/Console/</code></td><td><b>Inti proses bisnis</b> (posted, approve, reject, unapprove)</td><td>Status tidak berubah, email tidak terkirim, validasi POST/approve</td></tr>
+    <tr><td><code>app/Http/Livewire/</code></td><td>Form detail per modul, validasi pilihan container, upload foto/Excel</td><td>Container tidak muncul di dropdown, gagal tambah detail</td></tr>
+    <tr><td><code>app/Http/Requests/</code></td><td>Validasi form header (create/update)</td><td>Error validasi saat simpan header</td></tr>
+    <tr><td><code>app/DataTables/</code></td><td>Tabel daftar (index) server-side</td><td>Daftar kosong / kolom salah / filter</td></tr>
+    <tr><td><code>app/Models/</code></td><td>Model + relasi; <code>Container::updateStatusByCode()</code></td><td>Relasi null, cast tanggal, kolom fillable</td></tr>
+    <tr><td><code>app/Enums/</code></td><td>Status transaksi, status CT + warna, role, jenis kontrak/pekerjaan</td><td>Nilai string status yang dipakai di kode</td></tr>
+    <tr><td><code>app/Mail/</code> + <code>resources/views/emails</code></td><td>15 template email notifikasi</td><td>Isi/penerima email</td></tr>
+    <tr><td><code>app/Services/WhatspieService.php</code></td><td>Klien WA gateway (start/status/QR/terminate/kirim grup)</td><td>WA tidak terkirim, QR tidak muncul</td></tr>
+    <tr><td><code>app/Exports/</code>, <code>app/Imports/</code></td><td>Export Excel report; import Excel aktivitas harian</td><td>File Excel salah format/kolom</td></tr>
+    <tr><td><code>database/migrations/</code></td><td>Struktur tabel (Des 2022 – Apr 2024)</td><td>Kolom hilang; catatan: view <code>v_ct_*</code> <b>tidak ada</b> di migration</td></tr>
+    <tr><td><code>config/services.php</code></td><td><code>whatspie.secret / group / session</code> dari <code>WHATSPIE_SECRET_KEY</code>, <code>WHATSPIE_GROUP_ID</code>, <code>SESSION_ID_WA</code></td><td>Konfigurasi WA</td></tr>
+    <tr><td><code>deploy.php</code>, <code>.githooks/pre-push</code></td><td>Deploy otomatis &amp; tes sebelum push</td><td>Deploy gagal, aset tidak ter-build</td></tr>
+    <tr><td><code>storage/logs/laravel.log</code></td><td>Log error (termasuk <code>Log::error</code> WA &amp; Livewire)</td><td><b>Selalu cek pertama</b> saat ada error</td></tr>
+  </table>
+
+  <h3>Pola standar setiap transaksi</h3>
+  <div class="card p small">
+    <b>Header</b> (Controller <code>create/store/edit/update</code> + FormRequest) → <b>Detail</b> per container (Livewire <code>FormDetail::submit</code>) → <b>Sub-detail</b> item pekerjaan (Livewire <code>FormSubDetail</code>) → <b>POST</b> (<code>Controller::posted</code> → <code>Repository::posted</code>) → <b>Approve/Reject</b> (<code>Controller::approve/reject</code> → <code>Repository::approve/reject</code>).<br>
+    Kolom audit yang selalu diisi: <code>created_by</code>, <code>post_by/post_date</code>, <code>approve_by/approve_date</code> (+ <code>approve2_*</code>, <code>approve3_*</code>), <code>last_updated_by</code>, <code>reason_approve/reason_reject</code>. Penghapusan memakai soft delete (<code>deleted_at</code>) dan file foto ikut dihapus dari storage.
+  </div>
+
+  <h3>Status transaksi (<code>app/Enums/StatusEnum.php</code>)</h3>
+  <table>
+    <tr><th>Status</th><th>Arti</th><th>Dipakai oleh</th></tr>
+    <tr><td><span class="st dr">DRAFT</span></td><td>Masih bisa diedit/dihapus; hasil reject kembali ke sini</td><td>Semua transaksi</td></tr>
+    <tr><td><span class="st po">POSTED</span></td><td>Diajukan, menunggu approval; status CT sudah berubah untuk Aktivitas Harian &amp; Inspeksi</td><td>Semua transaksi (Aktivitas Harian berhenti di sini)</td></tr>
+    <tr><td><span class="st ap">APPROVE</span></td><td>Disetujui (1 tingkat)</td><td>Inspeksi, Progress, BAST 2</td></tr>
+    <tr><td><span class="st ap">APPROVE1/2/3</span></td><td>Approval bertingkat</td><td>BAST 1 (3 tingkat), Scrap (rencana 2 tingkat)</td></tr>
+  </table>
+</div>
+
+<!-- ================= HALAMAN 4 ================= -->
+<div class="page">
+  <h2><span class="no">3</span>Status container (state machine)</h2>
+  <p>Status disimpan di <code>containers.container_status_id</code> → tabel <code>container_statuses</code>, diubah hanya lewat <code>Container::updateStatusByCode($code)</code> (<code>M/Container.php:89</code>). Warna untuk dashboard ada di <code>app/Enums/ContainerStatusEnum.php</code>.</p>
+  <table>
+    <tr><th style="width:9%">Kode</th><th style="width:24%">Arti</th><th>Keterangan</th></tr>
+    <tr><td><span class="cs" style="background:#fff">O</span></td><td>Operasional</td><td>Sedang beroperasi di rangkaian kereta</td></tr>
+    <tr><td><span class="cs" style="background:#ffff00">SO</span></td><td>Siap Operasi</td><td>Di bawah/stasiun, layak pakai; juga hasil approve BAST 2</td></tr>
+    <tr><td><span class="cs" style="background:#f4b083">TSO</span></td><td>Tidak Siap Operasi</td><td>Rusak / sedang diperbaiki. Dashboard memecah: TSO Maintenance (#F4B083) &amp; TSO Upgrade &amp; Repair (#C55A11) berdasar <code>last_type_maintenance</code></td></tr>
+    <tr><td><span class="cs" style="background:#f5e342">SOI</span></td><td>Siap Operasi Isi</td><td>Siap operasi, masih bermuatan</td></tr>
+    <tr><td><span class="cs" style="background:#bcc9ab">TSOI</span></td><td>Tidak Siap Operasi Isi</td><td>Rusak, masih bermuatan</td></tr>
+    <tr><td><span class="cs" style="background:#ff0000;color:#fff">S</span></td><td>Scrap</td><td>Dihapusbukukan, status akhir</td></tr>
+  </table>
+
+  <h3>Tabel transisi status (siapa yang mengubah, di file mana)</h3>
+  <table>
+    <tr><th style="width:24%">Pemicu</th><th style="width:16%">Dari</th><th style="width:10%">Ke</th><th>Lokasi kode</th></tr>
+    <tr><td>Akt. Harian: <b>Turun Container</b></td><td>bukan TSO, lokasi id 2/3 (BJI/BBA)</td><td><b>SO</b></td><td rowspan="2"><code>R/ContainerDailyActivityRepository.php:38-50</code></td></tr>
+    <tr><td>Akt. Harian: <b>Turun Container</b></td><td>lainnya</td><td><b>TSO</b></td></tr>
+    <tr><td>Akt. Harian: <b>Naik Container</b></td><td>TSO / SO, SOI</td><td>TSO / <b>O</b></td><td><code>R/ContainerDailyActivityRepository.php:50-67</code></td></tr>
+    <tr><td>Akt. Harian: <b>Putus Gerbong</b></td><td>O</td><td><b>SO</b></td><td><code>…:68-74</code></td></tr>
+    <tr><td>Akt. Harian: <b>CT-DT</b></td><td>SO / O</td><td><b>SO</b></td><td><code>…:75-87</code></td></tr>
+    <tr><td>Akt. Harian: <b>Truck Unloading</b></td><td>SO</td><td><b>SOI</b></td><td><code>…:88-94</code></td></tr>
+    <tr><td>Akt. Harian: <b>Container Uplift</b></td><td>SO</td><td><b>O</b></td><td><code>…:95-101</code></td></tr>
+    <tr><td>Akt. Harian: <b>Container Unloading</b></td><td>TSOI</td><td><b>TSO</b></td><td><code>…:102-109</code></td></tr>
+    <tr><td><b>POST Inspeksi</b></td><td>SO / SOI</td><td><b>TSOI</b></td><td rowspan="2"><code>R/InspectionRepository.php:61-68</code></td></tr>
+    <tr><td><b>POST Inspeksi</b></td><td>lainnya (O)</td><td><b>TSO</b></td></tr>
+    <tr><td><b>Approve BAST 2</b> (dari Vendor)</td><td>TSO / TSOI</td><td><b>SO</b></td><td><code>R/ContainerDelegationFromVendorRepository.php:166-178</code> — dilewati jika ada record CT yang lebih baru (<code>v_ct_record</code>)</td></tr>
+    <tr><td><b>Approve Scrap</b> (tahap 1)</td><td>TSO</td><td><b>S</b></td><td><code>R/ContainerScrapRepository.php:129-131</code></td></tr>
+  </table>
+  <p class="note">Kolom "Dari" adalah status yang diizinkan oleh filter dropdown Livewire (<code>L/ContainerDailyActivity/FormDetail.php:79 updatedType()</code>). Data yang masuk lewat <b>upload Excel tidak melewati filter ini</b>.</p>
+
+  <svg viewBox="0 0 720 190" width="100%" style="margin-top:4px">
+    <defs><marker id="b" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#374151"/></marker></defs>
+    <g font-size="10.5" font-weight="700">
+      <rect x="20" y="75" width="70" height="36" rx="7" fill="#fff" stroke="#374151" stroke-width="1.5"/><text x="55" y="98" text-anchor="middle">O</text>
+      <rect x="230" y="20" width="70" height="36" rx="7" fill="#ffff00" stroke="#374151" stroke-width="1.5"/><text x="265" y="43" text-anchor="middle">SO</text>
+      <rect x="230" y="130" width="70" height="36" rx="7" fill="#f4b083" stroke="#374151" stroke-width="1.5"/><text x="265" y="153" text-anchor="middle">TSO</text>
+      <rect x="440" y="20" width="70" height="36" rx="7" fill="#f5e342" stroke="#374151" stroke-width="1.5"/><text x="475" y="43" text-anchor="middle">SOI</text>
+      <rect x="440" y="130" width="70" height="36" rx="7" fill="#bcc9ab" stroke="#374151" stroke-width="1.5"/><text x="475" y="153" text-anchor="middle">TSOI</text>
+      <rect x="630" y="130" width="70" height="36" rx="7" fill="#ff0000" stroke="#374151" stroke-width="1.5"/><text x="665" y="153" text-anchor="middle" fill="#fff">S</text>
+    </g>
+    <g font-size="9" fill="#374151" stroke="#374151" stroke-width="1.3">
+      <line x1="90" y1="82" x2="228" y2="42" marker-end="url(#b)"/><text x="104" y="92" stroke="none" transform="rotate(-16 104 92)">Putus Gerbong / CT-DT / Turun (BJI/BBA)</text>
+      <line x1="228" y1="30" x2="92" y2="76" marker-end="url(#b)"/><text x="100" y="30" stroke="none">Naik / Uplift</text>
+      <line x1="90" y1="104" x2="228" y2="145" marker-end="url(#b)"/><text x="70" y="140" stroke="none">Turun / POST Inspeksi</text>
+      <line x1="270" y1="128" x2="270" y2="58" marker-end="url(#b)"/><text x="276" y="96" stroke="none">Approve BAST 2</text>
+      <line x1="300" y1="38" x2="438" y2="38" marker-end="url(#b)"/><text x="320" y="32" stroke="none">Truck Unloading</text>
+      <line x1="475" y1="58" x2="475" y2="128" marker-end="url(#b)"/><text x="481" y="96" stroke="none">POST Inspeksi</text>
+      <line x1="438" y1="153" x2="302" y2="153" marker-end="url(#b)"/><text x="320" y="147" stroke="none">Container Unloading</text>
+      <path d="M300 160 Q 470 190 628 160" fill="none" marker-end="url(#b)"/><text x="400" y="186" stroke="none">Approve Scrap</text>
+    </g>
+  </svg>
+</div>
+
+<!-- ================= HALAMAN 5 ================= -->
+<div class="page">
+  <h2><span class="no">4</span>Alur proses end-to-end</h2>
+  <svg viewBox="0 0 720 300" width="100%">
+    <defs><marker id="c" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#1f2937"/></marker></defs>
+    <g font-size="10">
+      <rect x="5" y="5" width="710" height="290" rx="10" fill="#fafbfc" stroke="#d1d5db"/>
+      <g font-weight="700" fill="#6b7280" font-size="9.5"><text x="15" y="40">CHECKER</text><text x="15" y="135">SUPERVISOR</text><text x="15" y="205">MANAGER</text><text x="15" y="265">FINANCE</text></g>
+      <line x1="85" y1="95" x2="710" y2="95" stroke="#e5e7eb"/><line x1="85" y1="170" x2="710" y2="170" stroke="#e5e7eb"/><line x1="85" y1="235" x2="710" y2="235" stroke="#e5e7eb"/>
+      <!-- checker -->
+      <rect x="90" y="18" width="92" height="50" rx="7" fill="#f7f4ff" stroke="#8b5cf6" stroke-width="1.5"/><text x="136" y="38" text-anchor="middle" font-weight="700">1 Akt. Harian</text><text x="136" y="53" text-anchor="middle" fill="#4b5563">Turun CT → TSO</text>
+      <rect x="198" y="18" width="92" height="50" rx="7" fill="#f7f4ff" stroke="#8b5cf6" stroke-width="1.5"/><text x="244" y="38" text-anchor="middle" font-weight="700">2 Inspeksi</text><text x="244" y="53" text-anchor="middle" fill="#4b5563">POST → TSO/TSOI</text>
+      <rect x="306" y="18" width="92" height="50" rx="7" fill="#f7f4ff" stroke="#8b5cf6" stroke-width="1.5"/><text x="352" y="38" text-anchor="middle" font-weight="700">3 BAST 1</text><text x="352" y="53" text-anchor="middle" fill="#4b5563">CT ke vendor</text>
+      <rect x="414" y="18" width="92" height="50" rx="7" fill="#f7f4ff" stroke="#8b5cf6" stroke-width="1.5"/><text x="460" y="38" text-anchor="middle" font-weight="700">4 Progress</text><text x="460" y="53" text-anchor="middle" fill="#4b5563">% perbaikan</text>
+      <rect x="522" y="18" width="92" height="50" rx="7" fill="#f7f4ff" stroke="#8b5cf6" stroke-width="1.5"/><text x="568" y="38" text-anchor="middle" font-weight="700">5 BAST 2</text><text x="568" y="53" text-anchor="middle" fill="#4b5563">CT dari vendor</text>
+      <rect x="628" y="18" width="80" height="50" rx="7" fill="#f7f4ff" stroke="#8b5cf6" stroke-width="1.5"/><text x="668" y="38" text-anchor="middle" font-weight="700">1 Naik CT</text><text x="668" y="53" text-anchor="middle" fill="#4b5563">SO → O</text>
+      <g stroke="#1f2937" stroke-width="1.5"><line x1="182" y1="43" x2="196" y2="43" marker-end="url(#c)"/><line x1="398" y1="43" x2="412" y2="43" marker-end="url(#c)"/><line x1="614" y1="43" x2="626" y2="43" marker-end="url(#c)"/></g>
+      <!-- supervisor -->
+      <rect x="198" y="110" width="92" height="44" rx="7" fill="#effaf7" stroke="#14a38b" stroke-width="1.5"/><text x="244" y="128" text-anchor="middle" font-weight="700">Approve Insp.</text><text x="244" y="143" text-anchor="middle" fill="#4b5563">jenis + root cause</text>
+      <rect x="306" y="110" width="92" height="44" rx="7" fill="#effaf7" stroke="#14a38b" stroke-width="1.5"/><text x="352" y="128" text-anchor="middle" font-weight="700">APPROVE1</text><text x="352" y="143" text-anchor="middle" fill="#4b5563">BAST 1</text>
+      <rect x="414" y="110" width="92" height="44" rx="7" fill="#effaf7" stroke="#14a38b" stroke-width="1.5"/><text x="460" y="128" text-anchor="middle" font-weight="700">Approve</text><text x="460" y="143" text-anchor="middle" fill="#4b5563">Progress</text>
+      <rect x="522" y="110" width="92" height="44" rx="7" fill="#effaf7" stroke="#14a38b" stroke-width="1.5"/><text x="568" y="128" text-anchor="middle" font-weight="700">Approve BAST 2</text><text x="568" y="143" text-anchor="middle" fill="#4b5563">garansi, CT → SO</text>
+      <rect x="90" y="110" width="92" height="44" rx="7" fill="#fff4f4" stroke="#dc2626" stroke-width="1.5"/><text x="136" y="128" text-anchor="middle" font-weight="700">6 Buat Scrap</text><text x="136" y="143" text-anchor="middle" fill="#4b5563">CT TSO tak layak</text>
+      <g stroke="#1f2937" stroke-width="1.5"><line x1="244" y1="68" x2="244" y2="108" marker-end="url(#c)"/><line x1="352" y1="68" x2="352" y2="108" marker-end="url(#c)"/><line x1="460" y1="68" x2="460" y2="108" marker-end="url(#c)"/><line x1="568" y1="68" x2="568" y2="108" marker-end="url(#c)"/><line x1="290" y1="120" x2="304" y2="60" marker-end="url(#c)"/></g>
+      <!-- manager -->
+      <rect x="306" y="180" width="92" height="44" rx="7" fill="#effaf7" stroke="#14a38b" stroke-width="1.5"/><text x="352" y="198" text-anchor="middle" font-weight="700">APPROVE2</text><text x="352" y="213" text-anchor="middle" fill="#4b5563">BAST 1</text>
+      <rect x="90" y="180" width="92" height="44" rx="7" fill="#fff4f4" stroke="#dc2626" stroke-width="1.5"/><text x="136" y="198" text-anchor="middle" font-weight="700">Approve Scrap</text><text x="136" y="213" text-anchor="middle" fill="#4b5563">CT → S</text>
+      <g stroke="#1f2937" stroke-width="1.5"><line x1="352" y1="154" x2="352" y2="178" marker-end="url(#c)"/><line x1="136" y1="154" x2="136" y2="178" marker-end="url(#c)"/></g>
+      <!-- finance -->
+      <rect x="306" y="245" width="92" height="40" rx="7" fill="#effaf7" stroke="#14a38b" stroke-width="1.5"/><text x="352" y="263" text-anchor="middle" font-weight="700">APPROVE3</text><text x="352" y="277" text-anchor="middle" fill="#4b5563">BAST 1 final</text>
+      <line x1="352" y1="224" x2="352" y2="243" stroke="#1f2937" stroke-width="1.5" marker-end="url(#c)"/>
+      <text x="420" y="262" fill="#6b7280">BAST 2 bisa dibuat setelah BAST 1 berstatus ≠ DRAFT</text>
+      <text x="420" y="277" fill="#6b7280">dan ada progress perbaikan ber-status ≠ DRAFT</text>
+    </g>
+  </svg>
+
+  <h3>Narasi alur</h3>
+  <ol class="small">
+    <li><b>Container turun dari rangkaian.</b> Checker membuat Aktivitas Harian jenis <i>Turun Container</i> (manual atau upload Excel). Saat POST, CT menjadi <b>TSO</b> (atau <b>SO</b> di BJI/BBA) dan lokasi/gerbong/waktu turun dicatat di tabel <code>containers</code>.</li>
+    <li><b>Kerusakan dilaporkan.</b> Checker membuat Inspeksi, menambah detail per CT berisi deskripsi kerusakan, penyebab, dan foto. POST → CT menjadi TSO/TSOI, email ke semua Supervisor, laporan ke grup WA.</li>
+    <li><b>Supervisor menilai.</b> Supervisor mengisi <b>jenis perbaikan</b> (Maintenance / Upgrade &amp; Repair) dan <b>root cause</b> tiap detail, lalu Approve → <code>containers.last_type_maintenance</code> diisi; Reject → kembali DRAFT + email ke Checker.</li>
+    <li><b>CT diserahkan ke vendor (BAST 1).</b> Checker memilih vendor, kontrak, lokasi dan jenis pekerjaan; detail = CT yang pernah diinspeksi dan berstatus TSO/TSOI. Sub-detail (item pekerjaan) otomatis dibuat dari detail inspeksi yang belum dipakai, lalu diisi harga dari kontrak. Approval berjenjang Supervisor → Manager → Finance.</li>
+    <li><b>Vendor memperbaiki.</b> Checker membuat Progress Perbaikan per vendor + lokasi; sistem menarik semua CT di BAST 1 yang belum selesai (<code>is_done = 0</code>). Progress (%) tidak boleh turun. Supervisor approve.</li>
+    <li><b>CT kembali (BAST 2).</b> Checker membuat BAST dari Vendor; detail diambil dari BAST 1 yang belum selesai dan wajib punya progress yang sudah POSTED. POST → progress dipaksa 100%. Supervisor approve → garansi dihitung, BAST 1 ditandai selesai, CT menjadi <b>SO</b>.</li>
+    <li><b>CT dinaikkan lagi.</b> Aktivitas Harian <i>Naik Container</i> → CT <b>O</b>. CT TSO yang masih punya BAST 1 belum selesai <b>ditolak</b> untuk dinaikkan.</li>
+    <li><b>Jalur alternatif — Scrap.</b> CT TSO yang tidak layak diperbaiki diajukan Supervisor; Manager approve → CT <b>S</b>.</li>
+  </ol>
+</div>
+
+<!-- ================= HALAMAN 6: BP-01 & BP-02 ================= -->
+<div class="page">
+  <h2><span class="no">5</span>BP-01 · Master data &amp; kontrak</h2>
+  <p><b>Tujuan:</b> menyediakan data referensi untuk semua transaksi. <b>Pelaku:</b> Administrator (Container &amp; Kontrak juga Supervisor).</p>
+  <table>
+    <tr><th style="width:15%">Master</th><th style="width:27%">Controller</th><th style="width:27%">Repository</th><th>Catatan bisnis</th></tr>
+    <tr><td>Container</td><td><code>C/Master/ContainerController.php</code></td><td><code>R/ContainerRepository.php:18 store, 79 update</code></td><td>Kode CT (numerik, diurutkan <code>TRY_CAST(code as INT)</code>), vendor, company, kontrak, dokumen, status awal</td></tr>
+    <tr><td>Kontrak</td><td><code>C/Master/ContractController.php</code></td><td><code>R/ContractRepository.php</code></td><td>Jenis <b>Maintenance / Pengadaan</b>, <code>warranty_in_days</code> atau <code>warranty_in_month</code>, harga upgrade, status</td></tr>
+    <tr><td>Detail Kontrak</td><td><code>C/Master/ContractDetailController.php</code></td><td><code>R/ContractDetailRepository.php</code></td><td>Daftar item pekerjaan + satuan + harga; dipilih di sub-detail BAST</td></tr>
+    <tr><td>Vendor</td><td><code>C/Master/VendorController.php</code></td><td><code>R/VendorRepository.php</code></td><td>Vendor perbaikan / pengadaan</td></tr>
+    <tr><td>Lokasi</td><td><code>C/Master/LocationController.php</code></td><td><code>R/LocationRepository.php</code></td><td>Kode lokasi (BJI, BBA, …) memengaruhi aturan status; <b>id 2 &amp; 3 di-hardcode</b></td></tr>
+    <tr><td>Company / Unit</td><td><code>C/Master/CompanyController.php</code>, <code>UnitController.php</code></td><td><code>R/CompanyRepository.php</code>, <code>UnitRepository.php</code></td><td>Pemilik CT; satuan item pekerjaan</td></tr>
+    <tr><td>Admin (user)</td><td><code>C/Master/AdminController.php</code></td><td><code>R/AdminRepository.php</code></td><td>User + role + tanda tangan; ganti password di <code>C/AccessController.php</code></td></tr>
+    <tr><td>Config</td><td><code>C/Master/ConfigController.php</code></td><td><code>R/ConfigRepository.php</code></td><td>Flag <code>whatsapp-notif</code> (on/off), start/terminate sesi WA (<code>:82, :98</code>)</td></tr>
+  </table>
+  <div class="files"><b>Perhitungan garansi:</b> <code>R/ContractRepository.php:70 calculateWarrantyFromDate()</code> — akhir = tanggal mulai + <code>warranty_in_days</code> hari, jika kosong + <code>warranty_in_month</code> bulan. Dipakai saat approve BAST 2. Popup garansi container: <code>L/Container/WarrantyModal.php</code>.</div>
+
+  <h2 style="margin-top:14px"><span class="no">6</span>BP-02 · Aktivitas harian container</h2>
+  <p><b>Tujuan:</b> mencatat pergerakan CT setiap hari (naik/turun gerbong, bongkar truk) yang menentukan status operasional CT. <b>Pelaku:</b> Checker (input, POST). Tidak ada approval.</p>
+  <h4>Langkah</h4>
+  <ol class="small">
+    <li>Buat header: lokasi, tanggal aksi, jenis (<code>C/ContainerDailyActivityController.php:30 store</code>).</li>
+    <li>Tambah detail per CT: jenis aktivitas, CT, no. gerbong, no. trainset, sumber CT (<code>L/ContainerDailyActivity/FormDetail.php:175 submit</code>) <b>atau</b> upload Excel kolom <code>ct_no, container_source, carriage_number, type</code> (<code>:220 upload</code> → <code>app/Imports/ContainerDailyActivityDetailsImport.php</code>, file disimpan di <code>storage/bba-activity-files</code>).</li>
+    <li>POST → status CT berubah sesuai tabel transisi (bagian 3) + kolom <code>down_location_id / down_carriage_no / down_at</code> atau <code>up_*</code> diperbarui (<code>R/ContainerDailyActivityRepository.php:26 posted</code>).</li>
+  </ol>
+  <h4>Aturan bisnis</h4>
+  <ul class="small">
+    <li>Dropdown CT difilter per jenis aktivitas (<code>FormDetail.php:79 updatedType</code>): Turun = TSO (atau O/TSO di BBA/BJI) yang sedang naik dan tidak ada di draft lain; Naik = SO/TSO/SOI; Putus Gerbong = O; CT-DT = SO/O; Truck Unloading &amp; Uplift = SO; Container Unloading = TSOI.</li>
+    <li><b>Naik Container ditolak</b> jika CT TSO masih punya detail BAST 1 dengan <code>is_done = 0</code> (<code>FormDetail.php:154</code>).</li>
+    <li>Satu CT hanya boleh sekali per transaksi (rule unique). Draft &gt; 7 hari dihapus otomatis saat daftar dibuka.</li>
+  </ul>
+  <div class="files">
+    <div><b>Route:</b> <code>console.container-daily-activity.*</code> — <code>routes/admin.php:231-250</code></div>
+    <div><b>Model:</b> <code>M/ContainerDailyActivity.php</code>, <code>M/ContainerDailyActivityDetail.php</code> · <b>DataTable:</b> <code>app/DataTables/Console/ContainerDailyActivityDataTable.php</code></div>
+    <div><b>View:</b> <code>V/console/container-daily-activity/</code>, <code>V/livewire/container-daily-activity/</code> · <b>Tabel detail:</b> <code>L/ContainerDailyActivity/TableDailyActivityDetail.php</code></div>
+  </div>
+</div>
+
+<!-- ================= HALAMAN 7: BP-03 & BP-04 ================= -->
+<div class="page">
+  <h2><span class="no">7</span>BP-03 · Inspeksi kerusakan</h2>
+  <p><b>Tujuan:</b> melaporkan kerusakan CT dan menentukan jenis perbaikan. <b>Pelaku:</b> Checker (buat, POST), Supervisor (approve/reject).</p>
+  <table>
+    <tr><th style="width:16%">Tahap</th><th>Yang terjadi</th><th style="width:36%">File</th></tr>
+    <tr><td>Buat header</td><td>Lokasi, tanggal, no. KA</td><td><code>C/InspectionController.php:31 store</code>, <code>R/InspectionRepository.php:32</code></td></tr>
+    <tr><td>Tambah detail</td><td>Pilih CT (O; di BJI/BBA boleh SO/SOI/O), deskripsi kerusakan, penyebab, foto ke <code>storage/inspections/{id}</code>; event <code>InspectionDetailCreated</code></td><td><code>L/Inspection/FormDetail.php:37 submit</code>, edit: <code>L/Inspection/FormEditModal.php</code></td></tr>
+    <tr><td><span class="st po">POST</span></td><td>Wajib ada detail. CT → TSO (SO/SOI → TSOI). Email ke semua Supervisor. Jika config <code>whatsapp-notif</code> aktif → pesan grup WA berisi no. inspeksi, lokasi, tanggal, no. KA, kerusakan per CT + link foto</td><td><code>R/InspectionRepository.php:41 posted</code></td></tr>
+    <tr><td>Isi penilaian</td><td>Supervisor mengisi jenis perbaikan (header) &amp; root cause (per detail)</td><td><code>L/Inspection/FormHeader.php:23</code>, <code>L/Inspection/FormRootCause.php:25</code></td></tr>
+    <tr><td><span class="st ap">APPROVE</span></td><td>Wajib <code>fixing_job_type</code> &amp; semua <code>root_cause</code>. <code>containers.last_type_maintenance</code> diisi. Email ke Checker pembuat</td><td><code>R/InspectionRepository.php:118 approve</code></td></tr>
+    <tr><td>Reject</td><td>Kembali DRAFT + email ke Checker (status CT <b>tidak</b> dikembalikan)</td><td><code>R/InspectionRepository.php:157 reject</code></td></tr>
+  </table>
+  <div class="files">
+    <div><b>Route:</b> <code>console.inspection.*</code> — <code>routes/admin.php:170-192</code> · <b>Mail:</b> <code>InspectionNotificationEmail</code>, <code>InspectionApprovedEmail</code>, <code>InspectionRejectedEmail</code></div>
+    <div><b>Model:</b> <code>M/Inspection.php</code>, <code>M/InspectionDetail.php</code> · <b>Export:</b> <code>app/Exports/InspectionsExport.php</code> · <b>View:</b> <code>V/console/inspection/</code>, <code>V/livewire/inspection/</code></div>
+  </div>
+
+  <h2 style="margin-top:14px"><span class="no">8</span>BP-04 · BAST ke Vendor (BAST 1)</h2>
+  <p><b>Tujuan:</b> serah terima CT rusak ke vendor beserta daftar pekerjaan &amp; estimasi biaya. <b>Pelaku:</b> Checker (buat, POST), Supervisor → Manager → Finance (approve).</p>
+  <table>
+    <tr><th style="width:16%">Tahap</th><th>Yang terjadi</th><th style="width:36%">File</th></tr>
+    <tr><td>Buat header</td><td>Vendor, kontrak (sesuai vendor &amp; jenis), lokasi, jenis pekerjaan Maintenance / Upgrade &amp; Repair</td><td><code>L/ContainerDelegationToVendor/FormCreate.php:46</code>, edit <code>FormEdit.php:57</code></td></tr>
+    <tr><td>Tambah detail CT</td><td>CT harus pernah diinspeksi, status TSO/TSOI, tidak ada di BAST 1 lain yang belum selesai, dan <b>sudah diturunkan</b>. Sub-detail dibuat otomatis dari detail inspeksi non-DRAFT yang belum dipakai</td><td><code>L/ContainerDelegationToVendor/FormDetail.php:31 mount, :84 submit</code></td></tr>
+    <tr><td>Isi sub-detail</td><td>Item pekerjaan dari detail kontrak, qty × harga = estimasi, ukuran material, root cause, foto; bisa duplikat</td><td><code>L/…/FormSubDetail.php:77</code>, <code>FormEditSubDetail.php:150</code>, <code>R/ContainerDelegationToVendorRepository.php:328 duplicateSubDetail</code></td></tr>
+    <tr><td><span class="st po">POST</span></td><td>Wajib ada detail. Isi <code>last_maintenance_date/vendor</code> atau <code>last_upgrade_date/vendor</code> di CT, simpan no. gerbong. Email ke Supervisor</td><td><code>R/ContainerDelegationToVendorRepository.php:32 posted</code></td></tr>
+    <tr><td><span class="st ap">APPROVE1→3</span></td><td>Maintenance wajib punya sub-detail + root cause. Supervisor → A1 (email Manager), Manager → A2 (email Finance), Finance → A3 (email Supervisor + Manager)</td><td><code>…Repository.php:125 approve</code> (cabang :158, :170, :182)</td></tr>
+    <tr><td>Reject</td><td>Supervisor: POSTED → DRAFT (email Checker); Manager/Finance: → POSTED. Tanggal &amp; vendor maintenance/upgrade di CT dikosongkan</td><td><code>…Repository.php:197 reject</code></td></tr>
+    <tr><td>Unapprove</td><td>Supervisor/Admin: → DRAFT, ditolak jika CT sudah diproses di BAST 2 setelah tanggal BAST 1. Email Checker + Manager</td><td><code>…Repository.php:253 unapprove</code></td></tr>
+  </table>
+  <div class="files">
+    <div><b>Route:</b> <code>console.delegation-to-vendor.*</code> — <code>routes/admin.php:253-288</code> · <b>Controller:</b> <code>C/DelegationToVendorController.php</code></div>
+    <div><b>Model:</b> <code>ContainerDelegation</code>, <code>ContainerDelegationDetail</code> (<code>is_done</code>), <code>ContainerDelegationSubDetail</code> · <b>Mail:</b> <code>DelegationToVendor{,Approve,Reject}Email</code></div>
+  </div>
+</div>
+
+<!-- ================= HALAMAN 8: BP-05, BP-06 ================= -->
+<div class="page">
+  <h2><span class="no">9</span>BP-05 · Progress perbaikan (Container Repair)</h2>
+  <p><b>Tujuan:</b> memantau persentase perbaikan setiap CT di vendor. <b>Pelaku:</b> Checker (buat, update, POST), Supervisor (approve/reject).</p>
+  <table>
+    <tr><th style="width:16%">Tahap</th><th>Yang terjadi</th><th style="width:36%">File</th></tr>
+    <tr><td>Buat</td><td>Pilih vendor + lokasi. Sistem mencari semua BAST 1 (≠ DRAFT) untuk kombinasi itu dan membuat baris progress untuk setiap CT <code>is_done = 0</code>, membawa progress terakhir</td><td><code>R/ContainerRepairRepository.php:31 store</code></td></tr>
+    <tr><td>Update %</td><td>0–100, tidak boleh lebih kecil dari sebelumnya; bisa satu per satu atau massal</td><td><code>L/ContainerRepair/ContainerRepairProgress.php:95 submit, :135 submitProgressed</code></td></tr>
+    <tr><td><span class="st po">POST</span></td><td>Email ke Supervisor</td><td><code>R/ContainerRepairRepository.php:82 posted</code></td></tr>
+    <tr><td><span class="st ap">APPROVE</span></td><td>Ditolak jika masih ada progress lama (vendor + lokasi sama) berstatus DRAFT/POSTED. Email ke Checker</td><td><code>…:131 approve</code></td></tr>
+    <tr><td>Reject</td><td>Kembali DRAFT + email ke Checker</td><td><code>…:118 reject</code> (<b>ada typo di baris 126</b>)</td></tr>
+  </table>
+  <div class="files"><b>Route:</b> <code>console.container-repair.*</code> — <code>routes/admin.php:291-312</code> · <b>Controller:</b> <code>C/ContainerRepairController.php</code> · <b>Model:</b> <code>ContainerRepair</code>, <code>ContainerRepairDetail</code> · <b>Mail:</b> <code>Progress{Notification,Approved,Rejected}Email</code> · <b>DataTable:</b> <code>app/DataTables/ContainerRepairDataTable.php</code></div>
+
+  <h2 style="margin-top:14px"><span class="no">10</span>BP-06 · BAST dari Vendor (BAST 2) &amp; garansi</h2>
+  <p><b>Tujuan:</b> serah terima CT yang selesai diperbaiki, menutup BAST 1, menghitung garansi, dan mengembalikan CT ke status siap operasi. <b>Pelaku:</b> Checker (buat, POST), Supervisor (approve/reject).</p>
+  <table>
+    <tr><th style="width:16%">Tahap</th><th>Yang terjadi</th><th style="width:36%">File</th></tr>
+    <tr><td>Buat header</td><td>Vendor, lokasi, jenis pekerjaan (harus sama dengan BAST 1)</td><td><code>C/DelegationFromVendorController.php:32 store</code></td></tr>
+    <tr><td>Tambah detail CT</td><td>CT dari BAST 1 (≠ DRAFT, vendor/lokasi/jenis sama, <code>is_done = 0</code>), belum ada di BAST 2 DRAFT/POSTED lain, status TSO/TSOI, <b>wajib punya progress ≠ DRAFT</b>. Sub-detail BAST 1 disalin</td><td><code>L/ContainerDelegationFromVendor/FormDetail.php:91 mount, :137 submit</code></td></tr>
+    <tr><td>Sub-detail</td><td>Foto sesudah perbaikan, edit item, root cause</td><td><code>L/…/FormSubDetail.php:81</code>, <code>FormEditSubDetail.php:154</code>, <code>FormEditImageSubDetail.php:41</code></td></tr>
+    <tr><td><span class="st po">POST</span></td><td>Progress semua detail diset <b>100</b>. Email ke Supervisor</td><td><code>R/ContainerDelegationFromVendorRepository.php:50 posted, :225 updateProgress</code></td></tr>
+    <tr><td><span class="st ap">APPROVE</span></td><td>Hanya Supervisor (dan Admin) saat POSTED. Garansi = tanggal BAST 2 + masa garansi kontrak BAST 1: Upgrade → <code>containers.upgrade_warranty_*</code>; Maintenance → <code>warranty_*</code> per sub-detail. BAST 1 detail <code>is_done = true</code>. CT → <b>SO</b> kecuali sudah ada record lebih baru</td><td><code>…Repository.php:113 approve</code> + <code>R/ContractRepository.php:70</code></td></tr>
+    <tr><td>Reject</td><td>→ DRAFT, <code>is_done</code> BAST 1 dikembalikan false, email ke Checker</td><td><code>…Repository.php:184 reject</code></td></tr>
+  </table>
+  <div class="files">
+    <div><b>Route:</b> <code>console.delegation-from-vendor.*</code> — <code>routes/admin.php:345-379</code> · <b>Model:</b> <code>ContainerDelegationFromVendor{,Detail,SubDetail}</code></div>
+    <div><b>Mail:</b> <code>DelegationFromVendorEmail</code>, <code>DelegationFromVendorRejectEmail</code> (tidak ada email saat approve) · <b>DataTable:</b> Supervisor hanya melihat yang POSTED (<code>…Repository.php:212</code>)</div>
+  </div>
+</div>
+
+<!-- ================= HALAMAN 9: BP-07, BP-08 ================= -->
+<div class="page">
+  <h2><span class="no">11</span>BP-07 · Scrap container</h2>
+  <p><b>Tujuan:</b> menghapusbukukan CT yang tidak layak diperbaiki. <b>Pelaku:</b> Supervisor (buat, POST), Manager (approve/reject), Finance (rencana approve tahap 2).</p>
+  <table>
+    <tr><th style="width:16%">Tahap</th><th>Yang terjadi</th><th style="width:36%">File</th></tr>
+    <tr><td>Buat header</td><td>Vendor, lokasi, jenis, alasan, dokumen pendukung (<code>storage/documents/scrap</code>)</td><td><code>C/ContainerScrapController.php:32</code>, <code>R/ContainerScrapRepository.php:29, :81</code></td></tr>
+    <tr><td>Tambah detail</td><td>CT berstatus TSO, tidak sedang di BAST 1 yang belum selesai, tidak ada di scrap DRAFT/POSTED lain; foto + persentase</td><td><code>L/ContainerScrap/FormDetail.php:39 mount, :73, :92 submit</code></td></tr>
+    <tr><td><span class="st po">POST</span></td><td>Wajib ada detail. Email ke Manager</td><td><code>R/ContainerScrapRepository.php:43 posted</code></td></tr>
+    <tr><td><span class="st ap">APPROVE1</span></td><td>Manager: CT → <b>S</b>, email ke Manager</td><td><code>…:116 approve</code> (cabang :120)</td></tr>
+    <tr><td><span class="st ap">APPROVE2</span></td><td>Cabang Finance ada di kode, tetapi route hanya mengizinkan Administrator &amp; Manager → <b>tidak tercapai</b></td><td><code>…:144</code>, <code>routes/admin.php:338</code></td></tr>
+    <tr><td>Reject</td><td>Manager: POSTED → DRAFT; Finance: A1 → POSTED. Email ke Supervisor (status CT tidak dikembalikan dari S)</td><td><code>…:159 reject</code></td></tr>
+  </table>
+  <div class="files"><b>Route:</b> <code>console.container-scrap.*</code> — <code>routes/admin.php:315-342</code> · <b>Model:</b> <code>ContainerScrap</code>, <code>ContainerScrapDetail</code> · <b>Mail:</b> <code>ContainerScrap{Notif,Approve,Reject}Email</code> · <b>Tabel detail:</b> <code>L/ContainerScrap/TableScrapDetail.php</code></div>
+
+  <h2 style="margin-top:14px"><span class="no">12</span>BP-08 · Dashboard, report &amp; WhatsApp</h2>
+  <table>
+    <tr><th style="width:22%">Fitur</th><th>Sumber data</th><th style="width:38%">File</th></tr>
+    <tr><td>Dashboard utama</td><td>View <code>v_ct_so_tso</code> (model <code>Dashboard</code>), chart dari view <code>v_ct_bast_rekap</code>; banner status WA</td><td><code>C/DashboardController.php:20</code>, <code>L/Dashboard/MainSection.php</code>, <code>L/Dashboard/LivewireCharts.php:40</code></td></tr>
+    <tr><td>Container Dashboard</td><td>Rekap jumlah CT per status + warna; filter, modal daftar CT, export</td><td><code>C/Report/ContainerDashboardController.php</code>, <code>R/CTCReportRepository.php:26</code>, <code>L/ContainerDashboard/TableSection.php</code>, <code>app/Exports/CTReport.php</code></td></tr>
+    <tr><td>Container Status Report</td><td>Daftar CT terfilter status/lokasi</td><td><code>C/Report/ContainerStatusReportController.php</code>, <code>R/CTCReportRepository.php:94</code>, <code>L/Report/ContainerReport/TableSection.php</code>, <code>app/Exports/CTStatusReport.php</code></td></tr>
+    <tr><td>Container Record</td><td>Riwayat CT dari view <code>v_ct_record</code> (model <code>Record</code>)</td><td><code>C/Report/ContainerRecordController.php</code>, <code>L/Report/ContainerRecord/TableSection.php</code></td></tr>
+    <tr><td>BAST report</td><td>Maintenance / Upgrade / Inspeksi + export</td><td><code>C/Report/BastReportController.php</code>, <code>R/BastReportRepository.php</code>, <code>L/Report/FilterBast.php</code>, <code>app/Exports/BastListExport.php</code></td></tr>
+    <tr><td>WhatsApp</td><td>Gateway <code>172.16.10.114:3000</code>, header <code>x-api-key</code>; sesi dari <code>SESSION_ID_WA</code>, grup dari <code>WHATSPIE_GROUP_ID</code></td><td><code>app/Services/WhatspieService.php</code>, <code>L/WAService/ButtonAction.php</code>, <code>L/WAService/QRCodeModal.php</code>, <code>C/Master/ConfigController.php:82, :98</code></td></tr>
+  </table>
+  <div class="card r small"><b>Perhatian:</b> view <code>v_ct_so_tso</code>, <code>v_ct_bast_rekap</code>, <code>v_ct_record</code> <b>tidak ada di folder migration</b> — definisinya hanya ada di database produksi. Bila dashboard/report kosong atau error, periksa view ini langsung di SQL Server. Approve BAST 2 juga bergantung pada <code>v_ct_record</code>.</div>
+</div>
+
+<!-- ================= HALAMAN 10: matriks ================= -->
+<div class="page">
+  <h2><span class="no">13</span>Matriks hak akses (dari <code>routes/admin.php</code>)</h2>
+  <p class="small">L = lihat · C = buat/edit/hapus/POST · A = approve/reject · — = tidak boleh (403). Administrator selalu boleh semua.</p>
+  <table class="small" style="text-align:center">
+    <tr><th style="text-align:left">Menu</th><th>Checker</th><th>Supervisor</th><th>Manager</th><th>Finance</th><th>Fin. Staff</th><th>Purchasing</th><th>Site Mgr</th></tr>
+    <tr><td style="text-align:left">Container</td><td>L</td><td>L C</td><td>L</td><td>—</td><td>—</td><td>L</td><td>L</td></tr>
+    <tr><td style="text-align:left">Vendor</td><td>L</td><td>L</td><td>L</td><td>—</td><td>—</td><td>L</td><td>L</td></tr>
+    <tr><td style="text-align:left">Kontrak &amp; detail</td><td>—</td><td>L C</td><td>L</td><td>—</td><td>L</td><td>L</td><td>L</td></tr>
+    <tr><td style="text-align:left">Unit / Company</td><td>L</td><td>L</td><td>L</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+    <tr><td style="text-align:left">Lokasi</td><td>L <b style="color:#b91c1c">C*</b></td><td>L <b style="color:#b91c1c">C*</b></td><td>L <b style="color:#b91c1c">C*</b></td><td><b style="color:#b91c1c">C*</b></td><td><b style="color:#b91c1c">C*</b></td><td><b style="color:#b91c1c">C*</b></td><td><b style="color:#b91c1c">C*</b></td></tr>
+    <tr><td style="text-align:left">Admin (user)</td><td>—</td><td>L</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+    <tr><td style="text-align:left">Config / WA</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+    <tr><td style="text-align:left">Aktivitas Harian</td><td>L C</td><td>L</td><td>L</td><td>—</td><td>—</td><td>—</td><td>L</td></tr>
+    <tr><td style="text-align:left">Inspeksi</td><td>L C</td><td>L A</td><td>L</td><td>—</td><td>—</td><td>—</td><td>L</td></tr>
+    <tr><td style="text-align:left">BAST ke Vendor</td><td>L C</td><td>L A1 (edit)</td><td>L A2</td><td>L A3</td><td>—</td><td>—</td><td>L</td></tr>
+    <tr><td style="text-align:left">Progress</td><td>L C</td><td>L A</td><td>L</td><td>—</td><td>—</td><td>—</td><td>L</td></tr>
+    <tr><td style="text-align:left">BAST dari Vendor</td><td>L C</td><td>L A</td><td>L</td><td>—</td><td>—</td><td>—</td><td>L</td></tr>
+    <tr><td style="text-align:left">Scrap</td><td>L</td><td>L C</td><td>L A</td><td>—</td><td>—</td><td>—</td><td>L</td></tr>
+    <tr><td style="text-align:left">Report &amp; BAST report</td><td>L*</td><td>L*</td><td>L*</td><td>L*</td><td>L*</td><td>L*</td><td>L*</td></tr>
+  </table>
+  <p class="note">* Route tanpa middleware <code>role</code> → semua user login bisa mengakses (Lokasi selain index, Report, hapus detail inspeksi <code>:179</code>, update progress BAST 2 <code>:378</code>). Menu sidebar mungkin menyembunyikannya, tapi URL tetap bisa dibuka langsung.</p>
+
+  <h2 style="margin-top:12px"><span class="no">14</span>Matriks notifikasi</h2>
+  <table class="small">
+    <tr><th style="width:20%">Transaksi</th><th style="width:16%">Kejadian</th><th style="width:26%">Penerima</th><th>Class / lokasi</th></tr>
+    <tr><td rowspan="3">Inspeksi</td><td>POST</td><td>Semua Supervisor + <span class="tag wa">WA</span> grup</td><td><code>InspectionNotificationEmail</code> · <code>R/InspectionRepository.php:71, :103</code></td></tr>
+    <tr><td>Approve</td><td>Checker pembuat</td><td><code>InspectionApprovedEmail</code> · <code>:152</code></td></tr>
+    <tr><td>Reject</td><td>Checker pembuat</td><td><code>InspectionRejectedEmail</code> · <code>:166</code></td></tr>
+    <tr><td rowspan="4">BAST ke Vendor</td><td>POST</td><td>Semua Supervisor</td><td><code>DelegationToVendorEmail</code> · <code>:78</code></td></tr>
+    <tr><td>A1 / A2 / A3</td><td>Manager / Finance / Supervisor+Manager</td><td><code>DelegationToVendorApproveEmail</code> · <code>:168, :180, :192</code></td></tr>
+    <tr><td>Reject</td><td>Checker / Supervisor / Spv+Mgr</td><td><code>DelegationToVendorRejectEmail</code> · <code>:214, :224, :234</code></td></tr>
+    <tr><td>Unapprove</td><td>Checker + Manager</td><td><code>DelegationToVendorRejectEmail</code> · <code>:275, :280</code></td></tr>
+    <tr><td rowspan="2">Progress</td><td>POST</td><td>Semua Supervisor</td><td><code>ProgressNotificationEmail</code> · <code>R/ContainerRepairRepository.php:100</code></td></tr>
+    <tr><td>Approve / Reject</td><td>Checker pembuat</td><td><code>ProgressApprovedEmail</code> <code>:153</code> / <code>ProgressRejectedEmail</code> <code>:127</code></td></tr>
+    <tr><td rowspan="2">BAST dari Vendor</td><td>POST</td><td>Semua Supervisor</td><td><code>DelegationFromVendorEmail</code> · <code>:83</code></td></tr>
+    <tr><td>Reject</td><td>Semua Checker</td><td><code>DelegationFromVendorRejectEmail</code> · <code>:207</code></td></tr>
+    <tr><td rowspan="3">Scrap</td><td>POST</td><td>Semua Manager</td><td><code>ContainerScrapNotifEmail</code> · <code>R/ContainerScrapRepository.php:70</code></td></tr>
+    <tr><td>A1 / A2</td><td>Manager / Finance</td><td><code>ContainerScrapApproveEmail</code> · <code>:136, :154</code></td></tr>
+    <tr><td>Reject</td><td>Semua Supervisor</td><td><code>ContainerScrapRejectEmail</code> · <code>:174, :184</code></td></tr>
+    <tr><td>Sistem</td><td>WA terputus</td><td><code>it@baracoal.com</code></td><td><code>WhatsappServiceEmail</code> · <code>C/DashboardController.php:35</code></td></tr>
+  </table>
+</div>
+
+<!-- ================= HALAMAN 11: troubleshooting ================= -->
+<div class="page">
+  <h2><span class="no">15</span>Panduan troubleshooting: gejala → file yang dicek</h2>
+  <p class="small">Langkah umum: (1) lihat <code>storage/logs/laravel.log</code>; (2) cari route dari URL di <code>routes/admin.php</code>; (3) buka method controller → repository yang dipanggil; (4) bila masalah di form detail, buka komponen Livewire modul tsb.</p>
+  <table class="small">
+    <tr><th style="width:33%">Gejala</th><th style="width:33%">Kemungkinan penyebab</th><th>Cek di</th></tr>
+    <tr><td>403 Forbidden saat buka menu</td><td>Role user tidak ada di daftar <code>role:</code> route</td><td><code>routes/admin.php</code>, <code>M/Admin.php:50 hasRole</code>, kolom <code>admins.role</code></td></tr>
+    <tr><td>Tidak bisa login</td><td>Username/password salah, guard admin</td><td><code>C/Auth/LoginController.php:31</code>, <code>config/auth.php</code></td></tr>
+    <tr><td>Dashboard error 500</td><td>Config <code>whatsapp-notif</code> tidak ada di tabel <code>configs</code>, atau view <code>v_ct_*</code> hilang</td><td><code>C/DashboardController.php:30</code>, <code>L/Dashboard/*</code>, SQL Server views</td></tr>
+    <tr><td>CT tidak muncul di dropdown Aktivitas Harian</td><td>Status CT tidak sesuai jenis aktivitas, CT ada di draft lain, atau <code>down_at &gt; up_at</code></td><td><code>L/ContainerDailyActivity/FormDetail.php:79 updatedType</code></td></tr>
+    <tr><td>"CT … masih belum selesai di BAST 1"</td><td>Masih ada <code>container_delegation_details.is_done = 0</code> untuk CT tsb</td><td><code>FormDetail.php:154</code>; selesaikan BAST 2 atau cek <code>is_done</code></td></tr>
+    <tr><td>Status CT tidak berubah setelah POST Aktivitas Harian</td><td>Jenis aktivitas tidak cocok aturan; data Excel dengan <code>type</code> salah eja</td><td><code>R/ContainerDailyActivityRepository.php:26-115</code>, file di <code>storage/bba-activity-files</code></td></tr>
+    <tr><td>Upload Excel menghapus semua detail</td><td>Satu baris gagal → semua detail transaksi dihapus</td><td><code>L/ContainerDailyActivity/FormDetail.php:263</code></td></tr>
+    <tr><td>CT tidak bisa dipilih di Inspeksi</td><td>CT bukan O (BJI/BBA: SO/SOI/O); lokasi dari header</td><td><code>L/Inspection/FormDetail.php:27 mount</code></td></tr>
+    <tr><td>Tidak bisa approve inspeksi</td><td>Jenis perbaikan atau root cause belum diisi</td><td><code>R/InspectionRepository.php:118</code>, <code>L/Inspection/FormHeader.php</code>, <code>FormRootCause.php</code></td></tr>
+    <tr><td>WA grup tidak menerima laporan inspeksi</td><td>Config <code>whatsapp-notif</code> off (otomatis off jika sesi putus), sesi WA belum scan QR, secret kosong</td><td><code>app/Services/WhatspieService.php</code>, menu Config, <code>.env WHATSPIE_*</code>, log "WhatsApp API Error"</td></tr>
+    <tr><td>CT tidak muncul di detail BAST 1</td><td>Belum pernah diinspeksi, status bukan TSO/TSOI, masih di BAST 1 lain</td><td><code>L/ContainerDelegationToVendor/FormDetail.php:31</code></td></tr>
+    <tr><td>"…belum dilakukan aktivitas Turun Container"</td><td><code>down_at</code> kosong atau <code>up_at ≥ down_at</code></td><td><code>…/FormDetail.php:71 updatedSelectedContainer</code></td></tr>
+    <tr><td>Approve BAST 1 gagal / status loncat mundur</td><td>Sub-detail/root cause kosong (Maintenance); logika cabang Administrator</td><td><code>R/ContainerDelegationToVendorRepository.php:125-195</code></td></tr>
+    <tr><td>Progress tidak bisa dibuat</td><td>Tidak ada BAST 1 ≠ DRAFT untuk vendor+lokasi</td><td><code>R/ContainerRepairRepository.php:44-51</code></td></tr>
+    <tr><td>Progress tidak bisa di-approve</td><td>Ada progress lama vendor+lokasi sama masih DRAFT/POSTED</td><td><code>R/ContainerRepairRepository.php:131-141</code></td></tr>
+    <tr><td>CT tidak muncul di BAST 2</td><td>Jenis/vendor/lokasi beda dengan BAST 1, sudah di BAST 2 lain, BAST 1 masih DRAFT</td><td><code>L/ContainerDelegationFromVendor/FormDetail.php:91</code></td></tr>
+    <tr><td>"Belum ada progress … POSTED"</td><td>Progress CT masih DRAFT</td><td><code>…/FormDetail.php:137 submit</code>, tabel <code>container_repair_details</code></td></tr>
+    <tr><td>Garansi kosong/salah</td><td>Kontrak BAST 1 tanpa <code>warranty_in_days/month</code>; jenis pekerjaan</td><td><code>R/ContainerDelegationFromVendorRepository.php:136-160</code>, <code>R/ContractRepository.php:70</code></td></tr>
+    <tr><td>CT tidak jadi SO setelah approve BAST 2</td><td>Ada record CT di <code>v_ct_record</code> dengan tanggal lebih baru</td><td><code>…Repository.php:166-178</code></td></tr>
+    <tr><td>Halaman putih berisi teks error saat POST/approve Scrap</td><td><code>dd()</code> saat email gagal</td><td><code>R/ContainerScrapRepository.php:74, :140</code></td></tr>
+    <tr><td>POST/approve gagal "Connection could not be established"</td><td>SMTP gagal, email terkirim sinkron</td><td><code>.env MAIL_*</code>, <code>QUEUE_CONNECTION</code>, <code>config/mail.php</code></td></tr>
+    <tr><td>Dashboard/report kosong</td><td>View database berubah/hilang</td><td><code>v_ct_so_tso</code>, <code>v_ct_bast_rekap</code>, <code>v_ct_record</code> di SQL Server</td></tr>
+    <tr><td>Setelah deploy tampilan rusak</td><td><code>npm run prod</code> gagal, cache opcache</td><td><code>deploy.php</code>, <code>webpack.mix.js</code>, <code>public/mix-manifest.json</code></td></tr>
+  </table>
+</div>
+
+<!-- ================= HALAMAN 12: temuan ================= -->
+<div class="page">
+  <h2><span class="no">16</span>Temuan bug &amp; rekomendasi</h2>
+  <p class="small">Hasil pembacaan kode; perlu diverifikasi di lingkungan uji sebelum diperbaiki di produksi.</p>
+  <table class="small">
+    <tr><th style="width:9%">Level</th><th style="width:34%">Masalah</th><th style="width:27%">Lokasi</th><th>Dampak &amp; perbaikan</th></tr>
+    <tr><td><span class="tag k">KRITIS</span></td><td>Kondisi <code>role == 'Administrator' || role == 'X' &amp;&amp; status == …</code> — <code>&amp;&amp;</code> dievaluasi lebih dulu, Admin selalu masuk cabang pertama tanpa cek status</td><td><code>R/ContainerDelegationToVendorRepository.php:158, 170, 182, 204, 216, 226</code>; <code>R/ContainerScrapRepository.php:120, 144, 166, 176</code>; <code>R/ContainerDelegationFromVendorRepository.php:188</code></td><td>Admin approve BAST 1 APPROVE2 → kembali APPROVE1; reject selalu → DRAFT. Perbaiki: <code>($role == 'Administrator' || $role == 'X') &amp;&amp; $status == …</code>, atau tentukan tahap dari status saja</td></tr>
+    <tr><td><span class="tag t">TINGGI</span></td><td>Route tanpa middleware <code>role</code></td><td><code>routes/admin.php:93-98</code> (Lokasi), <code>:179</code>, <code>:378</code>, <code>:383-396</code></td><td>Semua user login bisa ubah/hapus lokasi, hapus detail inspeksi, ubah progress BAST 2. Tambah <code>->middleware('role:…')</code></td></tr>
+    <tr><td><span class="tag t">TINGGI</span></td><td>Scrap APPROVE2 tidak tercapai</td><td><code>routes/admin.php:338</code> vs <code>R/ContainerScrapRepository.php:144</code></td><td>Tambahkan Finance di route approve/reject scrap, atau hapus tahap 2 bila memang tidak dipakai</td></tr>
+    <tr><td><span class="tag t">TINGGI</span></td><td>Typo <code>createdByUser&gt;email</code> (seharusnya <code>-&gt;email</code>)</td><td><code>R/ContainerRepairRepository.php:126</code></td><td>Reject progress → email gagal / error. Status sudah DRAFT tersimpan sebelum email</td></tr>
+    <tr><td><span class="tag t">TINGGI</span></td><td>Validasi status CT di Inspeksi tidak pernah jalan: <code>!$this->location == 'BJI'</code> selalu false</td><td><code>L/Inspection/FormDetail.php:48</code></td><td>CT non-O bisa masuk inspeksi lewat request langsung. Ganti dengan <code>!in_array($this-&gt;location, ['BJI','BBA'])</code></td></tr>
+    <tr><td><span class="tag s">SEDANG</span></td><td>BAST 1: status CT salah hanya di-flash, data tetap disimpan</td><td><code>L/ContainerDelegationToVendor/FormDetail.php:101-103</code></td><td>Tambahkan <code>return</code> setelah flash error</td></tr>
+    <tr><td><span class="tag s">SEDANG</span></td><td><code>dd()</code> tertinggal</td><td><code>R/ContainerScrapRepository.php:74, :140</code></td><td>Proses berhenti, transaksi DB tidak commit. Hapus <code>dd()</code></td></tr>
+    <tr><td><span class="tag s">SEDANG</span></td><td>Exception setelah <code>DB::beginTransaction()</code> tanpa rollback</td><td><code>R/ContainerRepairRepository.php:35-51</code>; <code>L/ContainerDelegationFromVendor/FormDetail.php:178-221</code></td><td>Header progress bisa tersimpan setengah; koneksi menggantung transaksi. Bungkus dengan <code>DB::transaction()</code></td></tr>
+    <tr><td><span class="tag s">SEDANG</span></td><td>Email sinkron di dalam transaksi (queue sync)</td><td>Semua <code>Repository::posted/approve</code></td><td>SMTP gagal = proses gagal. Pakai queue database/redis + <code>afterCommit()</code></td></tr>
+    <tr><td><span class="tag s">SEDANG</span></td><td>Upload Excel tanpa validasi status CT; gagal satu baris menghapus semua detail</td><td><code>L/ContainerDailyActivity/FormDetail.php:247-265</code></td><td>Validasi per baris (CT ada, status sesuai jenis), hapus hanya baris dari file tsb</td></tr>
+    <tr><td><span class="tag s">SEDANG</span></td><td>Hardcode IP, email, id lokasi</td><td><code>app/Services/WhatspieService.php:22-113</code>; <code>R/InspectionRepository.php:191</code>; <code>C/DashboardController.php:35</code>; <code>R/ContainerDailyActivityRepository.php:40</code></td><td>Pindahkan ke <code>.env</code>/config; pakai kode lokasi, bukan id</td></tr>
+    <tr><td><span class="tag s">SEDANG</span></td><td>Dashboard crash bila config <code>whatsapp-notif</code> tidak ada</td><td><code>C/DashboardController.php:30</code></td><td>Cek <code>$config</code> null</td></tr>
+    <tr><td><span class="tag s">SEDANG</span></td><td>Bulk progress: <code>in_array($data['id'], $passed)</code> membandingkan id dengan key array</td><td><code>L/ContainerRepair/ContainerRepairProgress.php:201</code></td><td><b>Perlu dicek</b>: bisa menyebabkan sebagian progress tidak tersimpan</td></tr>
+    <tr><td><span class="tag rd">RENDAH</span></td><td>View <code>v_ct_*</code> tidak ada di migration; <code>.env.example</code> masih <code>mysql</code></td><td><code>database/migrations</code>, <code>.env.example</code></td><td>Simpan definisi view di migration; sesuaikan contoh env ke <code>sqlsrv</code></td></tr>
+    <tr><td><span class="tag rd">RENDAH</span></td><td>Seeder 8 akun dengan password sama <code>Password123</code></td><td><code>database/seeders/CreateAdminsTableSeeder.php:37</code></td><td>Pastikan tidak dipakai di produksi</td></tr>
+    <tr><td><span class="tag rd">RENDAH</span></td><td>Tidak ada scheduler; sisa boilerplate (OTP, Zenziva, RankUp, Transaction, <code>/test</code>)</td><td><code>app/Console/Kernel.php</code>, <code>app/Notifications</code>, <code>config/otp.php</code>, <code>routes/admin.php:404</code></td><td>Pertimbangkan reminder garansi habis / CT lama TSO; bersihkan kode tak terpakai</td></tr>
+  </table>
+
+  <div class="card g small"><b>Urutan perbaikan yang disarankan (tanpa biaya lisensi):</b>
+    <ol style="margin:3px 0 0">
+      <li>Perbaiki kondisi approve/reject (kurung + cek status) dan typo di Repair — dampak langsung ke integritas approval.</li>
+      <li>Tambah middleware <code>role</code> ke route yang terbuka dan perbaiki validasi lokasi di Inspeksi.</li>
+      <li>Hapus <code>dd()</code>, tambahkan rollback/<code>DB::transaction()</code>, kirim email lewat queue setelah commit.</li>
+      <li>Pindahkan IP/email/id ke config; simpan definisi view <code>v_ct_*</code> ke migration.</li>
+      <li>Tambah tes fitur untuk alur POST → approve setiap modul (hook <code>pre-push</code> sudah menjalankan <code>php artisan test</code>).</li>
+    </ol>
+  </div>
+</div>
+
+</body></html>

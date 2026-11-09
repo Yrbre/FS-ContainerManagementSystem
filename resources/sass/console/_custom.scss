@@ -1,0 +1,288 @@
+// Here you can add other styles
+.custom-file {
+    .custom-file-label {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
+
+.detail--center {
+    .detail--item {
+        text-align: center;
+    }
+}
+
+.scanner-button {
+    background-color: #fbb213;
+    width: 50px;
+    height: 50px;
+    outline: none;
+    border: none;
+    border-radius: 50%;
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    color: #fff;
+
+    &:focus,
+    &:focus-visible {
+        outline: none;
+    }
+}
+
+.scanner-loading {
+    background: #fff;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    justify-content: center;
+    align-items: center;
+    z-index: 5;
+}
+
+#reader__dashboard_section_csr {
+    button {
+        background-color: #fbb213;
+        outline: none;
+        border: none;
+        color: #fff;
+        padding: 5px 10px;
+        border-radius: 0.2rem;
+
+        &:focus,
+        &:focus-visible {
+            outline: none;
+        }
+    }
+}
+
+html:not([dir=rtl]) .sidebar-nav .nav-group-items .nav-link {
+    padding-left: 2rem;
+}
+
+.form-control[readonly] {
+    background-color: #e9ecef;
+    opacity: 1;
+}
+
+.fz-20 {
+    font-size: 20px;
+}
+
+.fz-14 {
+    font-size: 14px;
+}
+
+nav#nav-profile-detail {
+    .nav-tabs {
+        overflow-x: auto;
+        overflow-y: hidden;
+        display: flex;
+        flex-wrap: nowrap;
+
+        .nav-link {
+            border: none;
+            white-space: nowrap;
+
+            &.active {
+                border-top: none;
+                border-right: none;
+                border-bottom: 4px solid;
+                border-left: none;
+                border-color: rgb(21, 190, 241);
+            }
+
+            &:hover,
+            &:focus {
+                isolation: isolate;
+                border-top: none;
+                border-right: none;
+                border-bottom: 4px solid;
+                border-left: none;
+                border-color: rgb(21, 190, 241);
+            }
+        }
+    } 
+}
+
+@include media-breakpoint-down(sm) {
+    #nav-tabContent-profile {
+        .tab-pane {
+            .card {
+                .card-body {
+                    img.rounded {
+                        margin-bottom: 15px;
+                    }
+
+                    i.fa-angle-right {
+                        margin-top: 15px;
+                    }
+                }
+            }
+        }
+    }
+
+    .transaction-detail {
+        .owner {
+            span {
+                font-size: 14px;
+            }
+        }
+
+        .card-owner {
+            .col-sm-12 {
+                justify-content: center;
+            }
+
+            .col-md-10 {
+                margin-top: 10px;
+
+                span {
+                    font-size: 14px;
+                }
+            }
+
+            span.badge {
+                display: none;
+            }
+
+            span.fw-semibold {
+                margin-right: 0 !important;
+            }
+
+            .name {
+                margin-bottom: 10px;
+            }
+        }
+    }
+
+    .product-detail {
+        .col-sm-7 {
+            #title {
+                div {
+                    h4 {
+                        margin-top: 20px;
+                        font-size: 18px;
+                    }
+                }
+
+                div {
+                    margin-top: 10px;
+                    
+                    span {
+                        letter-spacing: normal;
+                        font-size: 13px;
+                    }
+                }
+            }
+
+            .info {
+                span,
+                p {
+                    font-size: 14px;
+                }
+
+                span.badge {
+                    padding: 0;
+                    background-color: transparent !important;
+                }
+                
+                span.text-white {
+                    color: rgb(79, 93, 115) !important;
+                    font-weight: normal;
+                }
+            }
+
+            #product-img-thumb {
+                overflow-y: hidden;
+                overflow-x: auto;
+                flex-wrap: nowrap;
+            }
+
+            .row#product-img-thumb > * {
+                width: auto;
+            }
+
+            .owner {
+                span {
+                    font-size: 14px;
+                }
+            }
+
+            .card-owner {
+                .col-sm-12 {
+                    justify-content: center;
+                }
+
+                .col-md-10 {
+                    margin-top: 10px;
+
+                    span {
+                        font-size: 14px;
+                    }
+                }
+            }
+
+            #approve,
+            #reject {
+                font-size: 13px;
+                padding: 5px;
+            }
+        }
+    }
+
+    .card-report {
+        .top {
+            .user-name {
+                margin-top: 20px;
+                font-size: 16px;
+            }
+
+            .user-info {
+                font-size: 14px;
+            }
+        }
+
+        .report-info {
+            font-size: 14px;
+            margin-top: 40px !important;
+        }
+
+        .trx-info {
+            img {
+                width: 100%;
+                height: 150px;
+            }
+
+            .top {
+                margin-top: 14px;
+                font-size: 14px;
+            }
+
+            .bottom {
+                margin-top: 14px;
+            }
+
+            .link {
+                margin-top: 14px;
+            }
+        }
+    }
+}
+
+.product-detail {
+    h5.title-section {
+        padding-bottom: 4px;
+        border-bottom: 4px solid #39f;
+    }
+}
+
+.transaction-detail {
+    h5.title-section {
+        padding-bottom: 4px;
+        border-bottom: 4px solid #39f;
+    }
+}

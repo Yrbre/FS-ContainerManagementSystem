@@ -1,0 +1,35 @@
+<?php
+
+namespace App\Mail;
+
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Mail\Mailable;
+use Illuminate\Queue\SerializesModels;
+
+class DelegationFromVendorRejectEmail extends Mailable implements ShouldQueue
+{
+    use Queueable, SerializesModels;
+
+    protected $containerDelegationFromVendor;
+
+    /**
+     * Create a new message instance.
+     *
+     * @return void
+     */
+    public function __construct($containerDelegationFromVendor)
+    {
+        $this->containerDelegationFromVendor = $containerDelegationFromVendor;
+    }
+
+    /**
+     * Build the message.
+     *
+     * @return $this
+     */
+    public function build()
+    {
+        return $this->subject('BAST From Vendor Reject Email')->markdown('mail.delegation-from-vendor-rejected-email')->with('containerDelegationFromVendor', $this->containerDelegationFromVendor);
+    }
+}

@@ -1,0 +1,30 @@
+
+// // If you want to override variables do it here
+@import "variables";
+
+$enable-ltr: true; /* stylelint-disable-line scss/dollar-variable-default */
+$enable-rtl: true; /* stylelint-disable-line scss/dollar-variable-default */
+
+// Import styles
+@import "node_modules/@coreui/coreui/scss/coreui";
+
+@import "layout";
+
+// Prism.js
+@import "examples";
+
+// If you want to add custom CSS you can put it here.
+@import "custom";
+
+@import "icon";
+
+@import "node_modules/bootstrap/scss/bootstrap";
+@import "node_modules/bootstrap/scss/functions";
+@import "node_modules/bootstrap/scss/variables";
+@import "node_modules/bootstrap/scss/mixins";
+@import "node_modules/bootstrap/scss/utilities.scss";
+
+// DataTables
+@import "~datatables.net-bs4/css/dataTables.bootstrap4.css";
+@import "~datatables.net-buttons-bs4/css/buttons.bootstrap4.css";
+

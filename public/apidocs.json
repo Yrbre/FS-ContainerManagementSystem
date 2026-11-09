@@ -1,0 +1,3385 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Bagi Bagi Mobile API",
+        "version": "1.0.0",
+        "contact": {
+            "name": "Bagi Bagi",
+            "email": "bagibagi@gmail.com"
+        },
+        "description": "Bagi Bagi Mobile API"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000/api/",
+            "description": "Local Server"
+        },
+        {
+            "url": "https://bagibagi.devhunts.com/api/",
+            "description": "Dev Server"
+        }
+    ],
+    "tags": [
+        {
+            "name": "otp",
+            "description": "OTP Section"
+        },
+        {
+            "name": "auth",
+            "description": "Authentication Section"
+        },
+        {
+            "name": "profile",
+            "description": "Profile Section"
+        },
+        {
+            "name": "notification",
+            "description": "Notification Section"
+        },
+        {
+            "name": "product",
+            "description": "Product Section"
+        },
+        {
+            "name": "transaction",
+            "description": "Transaction Section"
+        },
+        {
+            "name": "banner",
+            "description": "Banner Section"
+        },
+        {
+            "name": "peanute",
+            "description": "Peanute Section"
+        },
+        {
+            "name": "misc",
+            "description": "Misc Section"
+        }
+    ],
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        },
+        "responses": {
+            "GeneralSuccess": {
+                "description": "General Success Response",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "integer",
+                                    "example": 200,
+                                    "description": "HTTP Status Code"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "Ok",
+                                    "description": "HTTP Status Message"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "ProfileGetMeResponse": {
+                "description": "General Success Response",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "integer",
+                                    "example": 200,
+                                    "description": "HTTP Status Code"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "Ok",
+                                    "description": "HTTP Status Message"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "TokenResponse": {
+                "description": "Token Success Response",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "integer",
+                                    "example": 200,
+                                    "description": "HTTP Status Code"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "Ok",
+                                    "description": "HTTP Status Message"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+                                        "access_token": {
+                                            "type": "string"
+                                        },
+                                        "expires_in": {
+                                            "type": "integer",
+                                            "description": "number in seconds"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "SecurityTokenResponse": {
+                "description": "Security Token Success Response",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "integer",
+                                    "example": 200,
+                                    "description": "HTTP Status Code"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "Ok",
+                                    "description": "HTTP Status Message"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+                                        "security_token": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "NotificationResponse": {
+                "description": "xSuccess Response",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "integer",
+                                    "example": 200,
+                                    "description": "HTTP Status Code"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "Ok",
+                                    "description": "HTTP Status Message"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+                                        "count": {
+                                            "type": "integer"
+                                        },
+                                        "items": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Notification"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "GeneralValidation": {
+                "description": "General Validation Error Response",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "integer",
+                                    "example": 422,
+                                    "description": "HTTP Status Code"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "Validation Error ",
+                                    "description": "HTTP Status Message"
+                                },
+                                "errors": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "GeneralNotFound": {
+                "description": "General Not Found Error Response",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "integer",
+                                    "example": 404,
+                                    "description": "Not Found"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "Not Found",
+                                    "description": "HTTP Status Message"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "GeneralForbiddenResponse": {
+                "description": "General Forbidden Error Response",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "integer",
+                                    "example": 403,
+                                    "description": "Not Found"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "Forbidden",
+                                    "description": "HTTP Status Message"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "ProductListResponse": {
+                "description": "Success Response",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "integer",
+                                    "example": 200,
+                                    "description": "HTTP Status Code"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "Ok",
+                                    "description": "HTTP Status Message"
+                                },
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "$ref": "#/components/schemas/Product"
+                                    }
+                                },
+                                "links": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/PaginateLink"
+                                },
+                                "meta": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/PaginateMeta"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "ProductDetailResponse": {
+                "description": "Success Response",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "integer",
+                                    "example": 200,
+                                    "description": "HTTP Status Code"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "Ok",
+                                    "description": "HTTP Status Message"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+                                        "product": {
+                                            "type": "object",
+                                            "$ref": "#/components/schemas/Product"
+                                        },
+                                        "is_favourite": {
+                                            "type": "boolean",
+                                            "default": true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "InitialTransactionResponse": {
+                "description": "Success Response",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "integer",
+                                    "example": 200,
+                                    "description": "HTTP Status Code"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "Ok",
+                                    "description": "HTTP Status Message"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/Transaction"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "TransactionListResponse": {
+                "description": "Success Response",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "integer",
+                                    "example": 200,
+                                    "description": "HTTP Status Code"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "Ok",
+                                    "description": "HTTP Status Message"
+                                },
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "$ref": "#/components/schemas/Transaction"
+                                    }
+                                },
+                                "links": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/PaginateLink"
+                                },
+                                "meta": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/PaginateMeta"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "TransactionDetailResponse": {
+                "description": "Success Response",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "integer",
+                                    "example": 200,
+                                    "description": "HTTP Status Code"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "Ok",
+                                    "description": "HTTP Status Message"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/Transaction"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "TransactionChatListResponse": {
+                "description": "Success Response",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "integer",
+                                    "example": 200,
+                                    "description": "HTTP Status Code"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "Ok",
+                                    "description": "HTTP Status Message"
+                                },
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "$ref": "#/components/schemas/TransactionChat"
+                                    }
+                                },
+                                "links": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/PaginateLink"
+                                },
+                                "meta": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/PaginateMeta"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "ProductReviewListResponse": {
+                "description": "Success Response",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "integer",
+                                    "example": 200,
+                                    "description": "HTTP Status Code"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "Ok",
+                                    "description": "HTTP Status Message"
+                                },
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "$ref": "#/components/schemas/Review"
+                                    }
+                                },
+                                "links": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/PaginateLink"
+                                },
+                                "meta": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/PaginateMeta"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "BannerListResponse": {
+                "description": "Success Response",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "integer",
+                                    "example": 200,
+                                    "description": "HTTP Status Code"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "Ok",
+                                    "description": "HTTP Status Message"
+                                },
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer"
+                                            },
+                                            "image_full_url": {
+                                                "type": "string"
+                                            },
+                                            "image_small_url": {
+                                                "type": "string"
+                                            },
+                                            "created_at": {
+                                                "type": "string"
+                                            },
+                                            "updated_at": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "PeanuteResponse": {
+                "description": "Success Response",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "integer",
+                                    "example": 200,
+                                    "description": "HTTP Status Code"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "Ok",
+                                    "description": "HTTP Status Message"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+                                        "rank": {
+                                            "type": "object",
+                                            "$ref": "#/components/schemas/Rank"
+                                        },
+                                        "give_count": {
+                                            "type": "integer"
+                                        },
+                                        "receive_count": {
+                                            "type": "integer"
+                                        },
+                                        "peanute_count": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "CategoryListResponse": {
+                "description": "Success Response",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "integer",
+                                    "example": 200,
+                                    "description": "HTTP Status Code"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "Ok",
+                                    "description": "HTTP Status Message"
+                                },
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "$ref": "#/components/schemas/Category"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "ProvinceListResponse": {
+                "description": "Success Response",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "integer",
+                                    "example": 200,
+                                    "description": "HTTP Status Code"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "Ok",
+                                    "description": "HTTP Status Message"
+                                },
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "$ref": "#/components/schemas/Province"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "CityListResponse": {
+                "description": "Success Response",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "integer",
+                                    "example": 200,
+                                    "description": "HTTP Status Code"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "Ok",
+                                    "description": "HTTP Status Message"
+                                },
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "$ref": "#/components/schemas/City"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "DistrictListResponse": {
+                "description": "Success Response",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "integer",
+                                    "example": 200,
+                                    "description": "HTTP Status Code"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "Ok",
+                                    "description": "HTTP Status Message"
+                                },
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "$ref": "#/components/schemas/District"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "AddressListResponse": {
+                "description": "Success Response",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "integer",
+                                    "example": 200,
+                                    "description": "HTTP Status Code"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "Ok",
+                                    "description": "HTTP Status Message"
+                                },
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "$ref": "#/components/schemas/Address"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "AddressResponse": {
+                "description": "Success Response",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "integer",
+                                    "example": 200,
+                                    "description": "HTTP Status Code"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "Ok",
+                                    "description": "HTTP Status Message"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/Address"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "schemas": {
+            "Rank": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "minimum_donate": {
+                        "type": "integer"
+                    },
+                    "free_peanute": {
+                        "type": "integer"
+                    },
+                    "bonus_peanute": {
+                        "type": "integer"
+                    },
+                    "rank_level": {
+                        "type": "integer"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Bronze"
+                    }
+                }
+            },
+            "PaginateLink": {
+                "type": "object",
+                "properties": {
+                    "first": {
+                        "type": "string",
+                        "example": "http://example.com/pagination?page=1"
+                    },
+                    "last": {
+                        "type": "string",
+                        "example": "http://example.com/pagination?page=1"
+                    },
+                    "prev": {
+                        "type": "string",
+                        "example": "http://example.com/pagination?page=1"
+                    },
+                    "next": {
+                        "type": "string",
+                        "example": "http://example.com/pagination?page=1"
+                    }
+                }
+            },
+            "PaginateMeta": {
+                "type": "object",
+                "properties": {
+                    "current_page": {
+                        "type": "integer"
+                    },
+                    "from": {
+                        "type": "integer"
+                    },
+                    "last_page": {
+                        "type": "integer"
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "per_page": {
+                        "type": "integer"
+                    },
+                    "total": {
+                        "type": "integer"
+                    }
+                }
+            },
+            "ProfileStatus": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "email_verified_at": {
+                        "type": "string"
+                    },
+                    "change_name_count": {
+                        "type": "integer"
+                    },
+                    "change_phone_count": {
+                        "type": "integer"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "type": "string"
+                    }
+                }
+            },
+            "UserStatus": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "give_count": {
+                        "type": "integer"
+                    },
+                    "receive_count": {
+                        "type": "integer"
+                    },
+                    "peanute_count": {
+                        "type": "integer"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "type": "string"
+                    }
+                }
+            },
+            "User": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "full_name": {
+                        "type": "string"
+                    },
+                    "profile_picture_url": {
+                        "type": "string"
+                    },
+                    "phone": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "profile_status": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/ProfileStatus"
+                    },
+                    "user_status": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/UserStatus"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "type": "string"
+                    },
+                    "deleted_at": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Notification": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "notifiable_id": {
+                        "type": "integer"
+                    },
+                    "notifiable_type": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "type": "object",
+                        "properties": {
+                            "type": {
+                                "type": "string",
+                                "example": "GENERAL_NOTIFICATION"
+                            },
+                            "title": {
+                                "type": "string",
+                                "example": "You have reach Bronze level!"
+                            },
+                            "message": {
+                                "type": "string",
+                                "example": "You have reach Bronze level!"
+                            },
+                            "deeplink": {
+                                "type": "string",
+                                "example": "https://link.to/deep-link"
+                            }
+                        }
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "type": "string"
+                    },
+                    "deleted_at": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Review": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "rate": {
+                        "type": "integer"
+                    },
+                    "user": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/User"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "product": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "type": "string"
+                    },
+                    "deleted_at": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Category": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "parent_id": {
+                        "type": "integer"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "type": "string"
+                    },
+                    "deleted_at": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Condition": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "type": "string"
+                    },
+                    "deleted_at": {
+                        "type": "string"
+                    }
+                }
+            },
+            "ProductImage": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "image_full_url": {
+                        "type": "string"
+                    },
+                    "image_small_url": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "type": "string"
+                    },
+                    "deleted_at": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Product": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "giver": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/User"
+                    },
+                    "condition": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/Condition"
+                    },
+                    "category": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/Category"
+                    },
+                    "address": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/Address"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "integer",
+                        "$ref": "#/components/schemas/ProductStatus"
+                    },
+                    "images": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ProductImage"
+                        }
+                    },
+                    "published_at": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "type": "string"
+                    },
+                    "deleted_at": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Transaction": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "chat_room": {
+                        "type": "string",
+                        "description": "Unique chat room for websocket channel"
+                    },
+                    "product": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/Product"
+                    },
+                    "user": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/User"
+                    },
+                    "status": {
+                        "type": "integer",
+                        "$ref": "#/components/schemas/TransactionStatus"
+                    },
+                    "requested_at": {
+                        "type": "string"
+                    },
+                    "appointment_date": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "type": "string"
+                    },
+                    "deleted_at": {
+                        "type": "string"
+                    }
+                }
+            },
+            "TransactionChat": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "transaction": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/Transaction"
+                    },
+                    "sender": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/User"
+                    },
+                    "payload": {
+                        "type": "object",
+                        "properties": {
+                            "type": {
+                                "type": "string",
+                                "example": "text",
+                                "description": "(information,about,code_of_conduct,product,text,image,location,appointment_date,status,)"
+                            },
+                            "information": {
+                                "type": "string",
+                                "example": "Hati hati penipuan"
+                            },
+                            "about": {
+                                "type": "object",
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "About Eva N"
+                                    },
+                                    "register_date": {
+                                        "type": "string",
+                                        "example": "2022-01-01 10:00:00"
+                                    },
+                                    "points": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            },
+                            "code_of_conduct": {
+                                "type": "object",
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "About Eva N"
+                                    },
+                                    "points": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "title": {
+                                                    "type": "string"
+                                                },
+                                                "description": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "product": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "text": {
+                                "type": "string",
+                                "example": "Apakah masih tersedia?"
+                            },
+                            "image": {
+                                "type": "object",
+                                "properties": {
+                                    "url": {
+                                        "type": "string"
+                                    },
+                                    "caption": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "location": {
+                                "type": "object",
+                                "properties": {
+                                    "lat": {
+                                        "type": "number"
+                                    },
+                                    "long": {
+                                        "type": "number"
+                                    },
+                                    "caption": {
+                                        "type": "string",
+                                        "example": "Produk telah dikirim ke alamatmu!"
+                                    }
+                                }
+                            },
+                            "appointment_date": {
+                                "type": "object",
+                                "properties": {
+                                    "status": {
+                                        "type": "integer",
+                                        "description": "0 = pending, 1 = approved"
+                                    },
+                                    "title": {
+                                        "type": "string",
+                                        "example": "They suggesting date on .."
+                                    },
+                                    "date": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "status": {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "type": "integer",
+                                        "description": "const PENDING = 0; const STARTED = 1; const REPORTED_BY_BUYER = 2; const SHIPPED = 3; const RECIVED = 4; const REJECTED = 5;"
+                                    },
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Yeppy!! Selamat"
+                                    },
+                                    "caption": {
+                                        "type": "string",
+                                        "example": "Produk telah dikirim ke alamatmu!"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "type": "string"
+                    },
+                    "deleted_at": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Province": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "type": "string"
+                    },
+                    "deleted_at": {
+                        "type": "string"
+                    }
+                }
+            },
+            "City": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "province_id": {
+                        "type": "integer"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "type": "string"
+                    },
+                    "deleted_at": {
+                        "type": "string"
+                    }
+                }
+            },
+            "District": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "city_id": {
+                        "type": "integer"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "type": "string"
+                    },
+                    "deleted_at": {
+                        "type": "string"
+                    }
+                }
+            },
+            "ProductStatus": {
+                "type": "integer",
+                "enum": [
+                    {
+                        "value": 1,
+                        "description": "Pending need Review"
+                    },
+                    {
+                        "value": 2,
+                        "description": "Product in review"
+                    },
+                    {
+                        "value": 3,
+                        "description": "Product rejected"
+                    },
+                    {
+                        "value": 0,
+                        "description": "Product Published"
+                    }
+                ]
+            },
+            "TransactionStatus": {
+                "type": "integer",
+                "enum": [
+                    {
+                        "value": 0,
+                        "description": "Transaction pending, need approval from giver"
+                    },
+                    {
+                        "value": 1,
+                        "description": "Transaction has been started, seller and giver and receiver can start chatting"
+                    },
+                    {
+                        "value": 2,
+                        "description": "Transaction has been reported by buyer"
+                    },
+                    {
+                        "value": 3,
+                        "description": "Giver has been give their product to other."
+                    },
+                    {
+                        "value": 4,
+                        "description": "Receiver has been receive giver product."
+                    },
+                    {
+                        "value": 5,
+                        "description": "Transaction has been rejected by giver"
+                    },
+                    {
+                        "value": 6,
+                        "description": "Giver and receiver when date meetup has been approved, status transaction will be APPROVED"
+                    }
+                ]
+            },
+            "Address": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "district_id": {
+                        "type": "integer"
+                    },
+                    "radius": {
+                        "type": "number"
+                    },
+                    "latitude": {
+                        "type": "string"
+                    },
+                    "address": {
+                        "type": "string"
+                    },
+                    "postcode": {
+                        "type": "string"
+                    },
+                    "longitude": {
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "type": "string"
+                    },
+                    "deleted_at": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    },
+    "paths": {
+        "/otp": {
+            "post": {
+                "tags": [
+                    "otp"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "type": "integer",
+                                        "description": "1 = register, 2 = login, 3 = change email , 4 = change phone, 5 = phone verify, 6 = email verify",
+                                        "example": 1
+                                    },
+                                    "value": {
+                                        "type": "string",
+                                        "example": "62856123456"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/GeneralSuccess"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    }
+                }
+            }
+        },
+        "/otp/verify": {
+            "post": {
+                "tags": [
+                    "otp"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "type": "integer",
+                                        "description": "6 = email verify, 5 = phone verify"
+                                    },
+                                    "otp": {
+                                        "type": "string"
+                                    },
+                                    "value": {
+                                        "type": "string",
+                                        "description": "Email or phone number"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/SecurityTokenResponse"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/GeneralForbiddenResponse"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    }
+                }
+            }
+        },
+        "/auth/register/verify": {
+            "post": {
+                "tags": [
+                    "auth"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "phone": {
+                                        "type": "string"
+                                    },
+                                    "otp": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "name": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/TokenResponse"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    }
+                }
+            }
+        },
+        "/auth/login": {
+            "post": {
+                "tags": [
+                    "auth"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "phone": {
+                                        "type": "string"
+                                    },
+                                    "otp": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/TokenResponse"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    }
+                }
+            }
+        },
+        "/auth/token/refresh": {
+            "post": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/TokenResponse"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    }
+                }
+            }
+        },
+        "/auth/logout": {
+            "post": {
+                "tags": [
+                    "auth"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/GeneralSuccess"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    }
+                }
+            }
+        },
+        "/auth/email/verify": {
+            "post": {
+                "tags": [
+                    "auth"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "otp": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/GeneralSuccess"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    }
+                }
+            }
+        },
+        "/profile/update/email": {
+            "post": {
+                "tags": [
+                    "profile"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "otp": {
+                                        "type": "string"
+                                    },
+                                    "security_token": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/GeneralSuccess"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    }
+                }
+            }
+        },
+        "/profile/update/phone": {
+            "post": {
+                "tags": [
+                    "profile"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "phone": {
+                                        "type": "string"
+                                    },
+                                    "otp": {
+                                        "type": "string"
+                                    },
+                                    "security_token": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/GeneralSuccess"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    }
+                }
+            }
+        },
+        "/profile": {
+            "put": {
+                "tags": [
+                    "profile"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/GeneralSuccess"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    }
+                }
+            }
+        },
+        "/profile/me": {
+            "get": {
+                "tags": [
+                    "profile"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/ProfileGetMeResponse"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    }
+                }
+            }
+        },
+        "/profile/upload-avatar": {
+            "post": {
+                "tags": [
+                    "profile"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "image": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/ProfileGetMeResponse"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    }
+                }
+            }
+        },
+        "/profile/addresses": {
+            "post": {
+                "tags": [
+                    "profile"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "district_id": {
+                                        "type": "integer"
+                                    },
+                                    "address": {
+                                        "type": "string"
+                                    },
+                                    "latitude": {
+                                        "type": "number"
+                                    },
+                                    "longitude": {
+                                        "type": "number"
+                                    },
+                                    "postcode": {
+                                        "type": "integer"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/GeneralSuccess"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "profile"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/AddressListResponse"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    }
+                }
+            }
+        },
+        "/profile/addresses/{id}": {
+            "delete": {
+                "tags": [
+                    "profile"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "required": true,
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/GeneralSuccess"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "profile"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "required": true,
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/AddressResponse"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "profile"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "district_id": {
+                                        "type": "integer"
+                                    },
+                                    "address": {
+                                        "type": "string"
+                                    },
+                                    "latitude": {
+                                        "type": "number"
+                                    },
+                                    "longitude": {
+                                        "type": "number"
+                                    },
+                                    "location": {
+                                        "type": "string"
+                                    },
+                                    "postcode": {
+                                        "type": "integer"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "required": true,
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/AddressResponse"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    }
+                }
+            }
+        },
+        "/notifications": {
+            "get": {
+                "tags": [
+                    "notification"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/NotificationResponse"
+                    }
+                }
+            }
+        },
+        "/notifications/{id}/read": {
+            "put": {
+                "tags": [
+                    "notification"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "required": true,
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/GeneralSuccess"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    }
+                }
+            }
+        },
+        "/products/discovery": {
+            "get": {
+                "tags": [
+                    "product"
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "search",
+                        "schema": {
+                            "type": "string",
+                            "example": "Baju bekas"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "city_id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "condition_id",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        },
+                        "explode": true                       
+                    },
+                    {
+                        "in": "query",
+                        "name": "province_id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "district_id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "category_id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "peanute_free",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/ProductListResponse"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    }
+                }
+            }
+        },
+        "/products/{id}": {
+            "get": {
+                "tags": [
+                    "product"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "required": true,
+                        "name": "id",
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/ProductDetailResponse"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/GeneralNotFound"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/GeneralForbiddenResponse"
+                    }
+                }
+            }
+        },
+        "/products/{id}/favourite": {
+            "post": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "product"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "required": true,
+                        "name": "id",
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/GeneralSuccess"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/GeneralNotFound"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/GeneralForbiddenResponse"
+                    }
+                }
+            }
+        },
+        "/products/{id}/reviews": {
+            "post": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "product"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "required": true,
+                        "name": "id",
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "transaction_id": {
+                                        "type": "integer"
+                                    },
+                                    "rating": {
+                                        "type": "number"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/GeneralSuccess"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/GeneralNotFound"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/GeneralForbiddenResponse"
+                    }
+                }
+            },
+            "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "product"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "required": true,
+                        "name": "id",
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/ProductReviewListResponse"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/GeneralNotFound"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/GeneralForbiddenResponse"
+                    }
+                }
+            }
+        },
+        "/products/{id}/report": {
+            "post": {
+                "tags": [
+                    "product"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "required": true,
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "reason": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/GeneralSuccess"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/GeneralNotFound"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/GeneralForbiddenResponse"
+                    }
+                }
+            }
+        },
+        "/my/products": {
+            "get": {
+                "tags": [
+                    "product"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "search",
+                        "schema": {
+                            "type": "string",
+                            "example": "Baju bekas"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "category_id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/ProductListResponse"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/GeneralNotFound"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/GeneralForbiddenResponse"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "product"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "images": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
+                                    },
+                                    "title": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "category_id": {
+                                        "type": "integer"
+                                    },
+                                    "address_id": {
+                                        "type": "integer"
+                                    },
+                                    "condition_id": {
+                                        "type": "integer"
+                                    },
+                                    "peanute_free": {
+                                        "type": "integer"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/GeneralSuccess"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    }
+                }
+            }
+        },
+        "/my/products/{id}": {
+            "get": {
+                "tags": [
+                    "product"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "required": true,
+                        "name": "id",
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/ProductDetailResponse"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/GeneralNotFound"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/GeneralForbiddenResponse"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "product"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "required": true,
+                        "name": "id",
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "images": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
+                                    },
+                                    "title": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "address_id": {
+                                        "type": "integer"
+                                    },
+                                    "category_id": {
+                                        "type": "integer"
+                                    },
+                                    "condition_id": {
+                                        "type": "integer"
+                                    },
+                                    "peanute_free": {
+                                        "type": "integer"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/GeneralSuccess"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/GeneralNotFound"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/GeneralForbiddenResponse"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "product"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "required": true,
+                        "name": "id",
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/GeneralSuccess"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/GeneralNotFound"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/GeneralForbiddenResponse"
+                    }
+                }
+            }
+        },
+        "/my/products/favourites": {
+            "get": {
+                "tags": [
+                    "product"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "search",
+                        "schema": {
+                            "type": "string",
+                            "example": "Baju bekas"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/ProductListResponse"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/GeneralNotFound"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/GeneralForbiddenResponse"
+                    }
+                }
+            }
+        },
+        "/transactions/contact": {
+            "post": {
+                "description": "Initial contact",
+                "tags": [
+                    "transaction"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "product_id": {
+                                        "type": "integer"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/InitialTransactionResponse"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/GeneralNotFound"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/GeneralForbiddenResponse"
+                    }
+                }
+            }
+        },
+        "/transactions": {
+            "get": {
+                "tags": [
+                    "transaction"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "request_status",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "date",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/TransactionListResponse"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/GeneralNotFound"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/GeneralForbiddenResponse"
+                    }
+                }
+            }
+        },
+        "/transactions/{id}": {
+            "get": {
+                "tags": [
+                    "transaction"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/TransactionDetailResponse"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/GeneralNotFound"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/GeneralForbiddenResponse"
+                    }
+                }
+            }
+        },
+        "/transactions/{id}/chats": {
+            "get": {
+                "tags": [
+                    "transaction"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "required": true,
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/TransactionChatListResponse"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/GeneralNotFound"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/GeneralForbiddenResponse"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "transaction"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "required": true,
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "type": "string",
+                                        "example": "text",
+                                        "description": "(text,product,image,location,status)"
+                                    },
+                                    "text": {
+                                        "type": "string",
+                                        "example": "Apakah masih tersedia?"
+                                    },
+                                    "product": {
+                                        "type": "object",
+                                        "$ref": "#/components/schemas/Product"
+                                    },
+                                    "location": {
+                                        "type": "object",
+                                        "properties": {
+                                            "point": {
+                                                "type": "number"
+                                            },
+                                            "caption": {
+                                                "type": "string",
+                                                "example": "Produk telah dikirim ke alamatmu!"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "text": {
+                                    "summary": "Plain text message",
+                                    "value": {
+                                        "type": "text",
+                                        "text": "Hallo, apakah barang ini masih ada?"
+                                    }
+                                },
+                                "product": {
+                                    "summary": "Product message",
+                                    "value": {
+                                        "type": "product",
+                                        "product": 1
+                                    }
+                                },
+                                "location": {
+                                    "summary": "Location with caption",
+                                    "value": {
+                                        "type": "location",
+                                        "location": {
+                                            "lat": -0.032134234,
+                                            "lang": -0.032134234,
+                                            "caption": "Kalibata City"
+                                        }
+                                    }
+                                },
+                                "image": {
+                                    "summary": "Image caption",
+                                    "value": {
+                                        "type": "image",
+                                        "image": {
+                                            "content": "base64:...",
+                                            "caption": "Saya tunggu disini ya ..."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/GeneralSuccess"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/GeneralNotFound"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/GeneralForbiddenResponse"
+                    }
+                }
+            }
+        },
+        "/transactions/{id}/request-meetup": {
+            "post": {
+                "tags": [
+                    "transaction"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "required": true,
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "date": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/GeneralSuccess"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/GeneralNotFound"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/GeneralForbiddenResponse"
+                    }
+                }
+            }
+        },
+        "/transactions/{id}/approve-meetup": {
+            "post": {
+                "tags": [
+                    "transaction"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "required": true,
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/GeneralSuccess"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/GeneralNotFound"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/GeneralForbiddenResponse"
+                    }
+                }
+            }
+        },
+        "/transactions/{id}/update-status": {
+            "post": {
+                "tags": [
+                    "transaction"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "required": true,
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "reason": {
+                                        "type": "string"
+                                    },
+                                    "status": {
+                                        "type": "integer"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/GeneralSuccess"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/GeneralNotFound"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/GeneralForbiddenResponse"
+                    }
+                }
+            }
+        },
+        "/transactions/{id}/confirm": {
+            "post": {
+                "tags": [
+                    "transaction"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "required": true,
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/GeneralSuccess"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/GeneralNotFound"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/GeneralForbiddenResponse"
+                    }
+                }
+            }
+        },
+        "/transactions/{id}/reject": {
+            "post": {
+                "tags": [
+                    "transaction"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "required": true,
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "reason": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/GeneralSuccess"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/GeneralNotFound"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/GeneralForbiddenResponse"
+                    }
+                }
+            }
+        },
+        "/transactions/{id}/report": {
+            "post": {
+                "tags": [
+                    "transaction"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "required": true,
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "reason": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/GeneralSuccess"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/GeneralNotFound"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/GeneralForbiddenResponse"
+                    }
+                }
+            }
+        },
+        "/banners": {
+            "get": {
+                "tags": [
+                    "banner"
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/BannerListResponse"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/GeneralNotFound"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/GeneralForbiddenResponse"
+                    }
+                }
+            }
+        },
+        "/my/peanute": {
+            "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "peanute"
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/PeanuteResponse"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/GeneralNotFound"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/GeneralForbiddenResponse"
+                    }
+                }
+            }
+        },
+        "/miscs/categories": {
+            "get": {
+                "tags": [
+                    "misc"
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "parent_id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/CategoryListResponse"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/GeneralNotFound"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/GeneralForbiddenResponse"
+                    }
+                }
+            }
+        },
+        "/miscs/provinces": {
+            "get": {
+                "tags": [
+                    "misc"
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "name",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/ProvinceListResponse"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/GeneralNotFound"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/GeneralForbiddenResponse"
+                    }
+                }
+            }
+        },
+        "/miscs/cities": {
+            "get": {
+                "tags": [
+                    "misc"
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "province_id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/CityListResponse"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/GeneralNotFound"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/GeneralForbiddenResponse"
+                    }
+                }
+            }
+        },
+        "/miscs/districts": {
+            "get": {
+                "tags": [
+                    "misc"
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "city_id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/DistrictListResponse"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/GeneralValidation"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/GeneralNotFound"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/GeneralForbiddenResponse"
+                    }
+                }
+            }
+        }
+    }
+}
